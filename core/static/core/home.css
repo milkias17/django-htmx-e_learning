@@ -1,0 +1,62 @@
+/* Alert  */
+.textSize {
+  font-size: 1rem;
+}
+.textSizeSm {
+  font-size: 0.8rem;
+  color: black;
+}
+.fontsBold {
+  font-weight: 700;
+}
+/* ===================== */
+/* Navbar */
+.menuBtn {
+  display: block;
+}
+.udemyLogo {
+  display: flex;
+  justify-content: start;
+}
+.search {
+  display: none;
+}
+.btns {
+  display: none;
+}
+.searchBtn {
+  display: block;
+}
+@media (min-width: 800px) {
+  .menuBtn {
+    display: none;
+  }
+  .udemyLogo {
+    display: flex;
+    justify-content: center;
+  }
+  .search {
+    display: block;
+  }
+  .btns {
+    display: flex;
+    align-items: center;
+    text-align: center;
+  }
+  .searchBtn {
+    display: none;
+  }
+}
+
+/* ===================== */
+/* carsouel */
+.wCustom {
+  width: 100%;
+}
+
+@media (min-width: 1300px) {
+  .wCustom {
+    width: 1300px;
+  }
+}
+/* ===================== */

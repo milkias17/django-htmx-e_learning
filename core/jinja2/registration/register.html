@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="flex justify-center mt-40 h-full">
+        <form class="form-control gap-4" method="post">
+            {% csrf_token %}
+            <h1 class="font-bold mb-5">Sign up and start learning</h1>
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}<div class="alert alert-error">{{ error }}</div>{% endfor %}
+            {% endif %}
+            {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+            {% for field in form.visible_fields %}
+                {% for error in field.errors %}<div class="alert alert-error">{{ error }}</div>{% endfor %}
+                {% if field.use_fieldset %}
+                    <fieldset class="flex gap-2">
+                        {% if field.label %}{{ field.legend_tag }}{% endif %}
+                        {{ field }}
+                    </fieldset>
+                {% else %}
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                        <div class="flex items-center gap-2">
+                            {{ field.label_tag }}
+                            {{ field }}
+                        </div>
+                    {% else %}
+                        {{ field.label }}
+                        {{ field }}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            <button type="submit" class="btn btn-primary text-white">Sign Up</button>
+            <div class="space-y-2">
+                <div class="divider"></div>
+                <p class="text-xs">
+                    Already have an account?
+                    <a href="/accounts/login" class="ml-2 text-primary text-sm underline">Log in</a>
+                </p>
+            </div>
+        </form>
+    </div>
+{% endblock content %}
