@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <header>
+      <div
+        class="bg-udemyPurple text-white p-4 flex px-9 w-screen max-sm:text-sm text-base"
+      >
+        <div class="flex justify-center flex-grow">
+          <a href="#"
+            ><span class="styles.fontsBold">Ready to get with the times?</span>
+            | Get the skills with Udemy Business.</a
+          >
+        </div>
+        <div class="flex justify-end">
+          <button onClick="(handleAlertDismiss)">
+            <img
+              src="assets/close.svg"
+              alt="Close"
+              class="invert"
+              width="{25}"
+              height="{25}"
+            />
+          </button>
+        </div>
+      </div>
+      <!-- ===============navbar=================== -->
+      <nav>
+        <div
+          class="z-10 navbar bg-base-100 flex flex-row justify-between px-8 w-auto drop-shadow-lg"
+        >
+          <div class="{`${styles.menuBtn}`}">
+            <button class="btn btn-square btn-ghost">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+                class="inline-block w-5 h-5 stroke-current"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                ></path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="{`${styles.udemyLogo}`}">
+            <a>
+              <img
+                src="assets/logo-udemy.svg"
+                alt="Udemy Logo"
+                width="{95}"
+                height="{20}"
+              />
+            </a>
+            <div class="{`${styles.search}" dropdown dropdown-hover z-50`}>
+              <div
+                tabindex="{0}"
+                role="button"
+                class="mx-7 hover:text-udemyPurple"
+              >
+                <span>Catagories</span>
+              </div>
+              <ul
+                tabindex="{0}"
+                class="dropdown-content z-10 menu p-2 shadow bg-base-100 w-52"
+              >
+                <li>
+                  <a>Item 1</a>
+                </li>
+                <li>
+                  <a>Item 2</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          {/* search functionality */}
+          <div
+            class="{`${styles.search}"
+            border-solid
+            border-black
+            border
+            rounded-3xl
+            w-auto
+            flex-1`}
+          >
+            <div
+              class="form-control p-3 flex flex-grow flex-row justify-between"
+            >
+              <div>
+                <img
+                  src="assets/search.svg"
+                  alt="Search"
+                  class="invert"
+                  height="{23}"
+                  width="{23}"
+                />
+              </div>
+              <div class="flex-grow ml-2">
+                <input
+                  type="text"
+                  class="text-sm placeholder-gray-500 bg-transparent w-full border-none outline-none"
+                  placeholder="Search for anything"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="relative flex justify-end">
+            {/* text */}
+            <div class="hidden xl:block dropdown dropdown-hover">
+              <div
+                tabindex="{0}"
+                role="button"
+                class="ml-5 hover:text-udemyPurple"
+              >
+                <span>Udemy Business</span>
+              </div>
+              <div
+                tabindex="{0}"
+                class="dropdown-content z-[1] menu p-2 shadow bg-base-100 w-64 font-bold"
+              >
+                <p class="text-lg text-center tracking-wide mt-1">
+                  Get your team access to over 25,000 top Udemy courses,
+                  anytime, anywhere.
+                </p>
+                <button
+                  class="btn btn-wide rounded-none btn-neutral mt-3 text-lg text-white"
+                >
+                  Try Udemy Business
+                </button>
+              </div>
+            </div>
+            {/* text */}
+            <div class="dropdown dropdown-hover">
+              <div
+                tabindex="{0}"
+                role="button"
+                class="mx-7 hidden lg:block hover:text-udemyPurple"
+              >
+                <span>Teach on Udemy</span>
+              </div>
+              <div
+                tabindex="{0}"
+                class="dropdown-content z-[1] menu p-2 shadow bg-base-100 w-64 font-bold"
+              >
+                <p class="text-lg text-center tracking-wide mt-1">
+                  Turn what you know into an opportunity and reach millions
+                  around the world.
+                </p>
+                <button
+                  class="btn btn-wide rounded-none btn-neutral mt-3 text-lg text-white"
+                >
+                  Learn more
+                </button>
+              </div>
+            </div>
+            {/* cart icon */}
+            <div class="{`${styles.searchBtn}" mx-2`}>
+              <img
+                src="assets/search.svg"
+                alt="Search"
+                class="invert pt-1"
+                height="{25}"
+                width="{25}"
+              />
+            </div>
+            <div class="relative dropdown dropdown-hover px-2">
+              <div tabindex="{0}" role="button" class="pt-2">
+                <div class="indicator">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6 hover:stroke-udemyPurple"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
+                  </svg>
+                  {/* <span class="badge badge-sm indicator-item">8</span> */}
+                </div>
+              </div>
+              <div
+                tabindex="{0}"
+                class="absolute top-14 z-[1] card card-compact dropdown-content w-52 bg-base-100 shadow"
+              >
+                <div class="card-body">
+                  <span
+                    class="text-sm text-center tracking-wide font-semibold text-gray-500"
+                  >
+                    Your cart is empty
+                  </span>
+                  <div class="flex justify-center card-actions">
+                    <a
+                      class="text-udemyPurple font-semibold tracking-wide"
+                      href="#"
+                    >
+                      Keep shopping
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* buttons */}
+            <div
+              class="{`${styles.btns}"
+              btn
+              btn-ghost
+              font-bold
+              rounded-none
+              border
+              border-solid
+              border-black
+              hover:border-black
+              mx-1`}
+            >
+              Log in
+            </div>
+            <div
+              class="{`${styles.btns}"
+              btn
+              btn-neutral
+              font-bold
+              text-white
+              rounded-none
+              mx-1`}
+            >
+              Sign up
+            </div>
+            <div
+              class="{`${styles.btns}"
+              btn
+              btn-ghost
+              rounded-none
+              border
+              border-solid
+              border-black
+              hover:border-black
+              mx-1`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="{24}"
+                height="{24}"
+                fill="black"
+                viewBox="0 -960 960 960"
+              >
+                <path
+                  d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <!-- ================================= -->
+    </header>
+    <main>
+      <!-- ===============carousel========== -->
+      <div class="flex justify-center">
+        <div class="{`${styles.wCustom}" h-auto mx-auto`}>
+          <img src="assets/pic_2.jpg" alt="" width="{1300}" height="{100}" />
+        </div>
+      </div>
+      <!-- ================================= -->
+      <!-- ============companies========== -->
+      <div class="my-10 p-5 w-full flex flex-col flex-grow bg-gray-100">
+        <p class="md:text-lg text-center text-gray-500 font-semibold">
+          Trusted by over 15,000 companies and millions of learners around the
+          world
+        </p>
+        <div
+          class="px-20 flex flex-col lg:flex-row justify-center flex-grow lg:justify-between"
+        >
+          <div
+            class="m-5 flex flex-row justify-around lg:justify-between flex-grow"
+          >
+            {companies1.map((url, index) => ( <Image key={index} src={url}
+            alt={""} width={65} height={65} class="mx-2" /> ))}
+          </div>
+          <div
+            class="m-5 flex flex-row justify-around lg:justify-between flex-grow"
+          >
+            {companies2.map((url, index) => ( <Image key={index} src={url}
+            alt={""} width={65} height={65} class="mx-2" /> ))}
+          </div>
+        </div>
+      </div>
+      <!-- ================================ -->
+      <!-- ===========courses============ -->
+      <div>
+        <div class="card w-96 bg-base-100 shadow-xl">
+          <figure>
+            <img
+              src="https://img.daisyui.com/imgs/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
+              alt="Shoes"
+            />
+          </figure>
+          <div class="card-body">
+            <h2 class="card-title">Shoes!</h2>
+            <p>If a dog chews shoes whose shoes does he choose?</p>
+            <div class="card-actions justify-end">
+              <button class="btn btn-primary">Buy Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ============================== -->
+      <!-- ================footer================== -->
+      <footer class="footer p-10 bg-neutral text-neutral-content">
+        <nav>
+          <h6 class="link link-hover">Udemy Business</h6>
+          <a class="link link-hover">Teach on Udemy</a>
+          <a class="link link-hover">Get the app</a>
+          <a class="link link-hover">About us</a>
+          <a class="link link-hover">Contact us</a>
+        </nav>
+        <nav>
+          <h6 class="link link-hover">Career</h6>
+          <a class="link link-hover">Blog</a>
+          <a class="link link-hover">Help and Support</a>
+          <a class="link link-hover">Affiliate</a>
+          <a class="link link-hover">Investors</a>
+        </nav>
+        <nav>
+          <h6 class="link link-hover">Terms</h6>
+          <a class="link link-hover">Privacy policy</a>
+          <a class="link link-hover">Cookie settings</a>
+          <a class="link link-hover">Sitemap</a>
+          <a class="link link-hover">Accessibility statement</a>
+        </nav>
+        <div class="w-full">
+          <a>
+            <img
+              src="assets/logo-udemy.svg"
+              alt="Udemy Logo"
+              width="{95}"
+              height="{20}"
+              class="invert"
+            />
+          </a>
+        </div>
+      </footer>
+      <!-- ====================================== -->
+    </main>
+  </body>
+</html>

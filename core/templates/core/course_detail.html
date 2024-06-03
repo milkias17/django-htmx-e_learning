@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load core_filters %}
+{% block content %}
+    <div class="hero min-h-screen bg-base-200">
+        <div class="hero-content flex-col lg:flex-row-reverse">
+            <img src="https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.jpg"
+                 class="max-w-sm rounded-lg shadow-2xl" />
+            <div>
+                <h1 class="text-5xl font-bold">{{ course.title }}</h1>
+                <p class="py-6">{{ course.short_description }}</p>
+                <div class="rating rating-lg rating-half">
+                    <input type="radio" name="rating-10" class="rating-hidden" />
+                    <input type="radio"
+                           name="rating-10"
+                           class="bg-green-500 mask mask-star-2 mask-half-1" />
+                    <input type="radio"
+                           name="rating-10"
+                           class="bg-green-500 mask mask-star-2 mask-half-2" />
+                    <input type="radio"
+                           name="rating-10"
+                           class="bg-green-500 mask mask-star-2 mask-half-1"
+                           checked />
+                    <input type="radio"
+                           name="rating-10"
+                           class="bg-green-500 mask mask-star-2 mask-half-2" />
+                    <input type="radio"
+                           name="rating-10"
+                           class="bg-green-500 mask mask-star-2 mask-half-1" />
+                    <input type="radio"
+                           name="rating-10"
+                           class="bg-green-500 mask mask-star-2 mask-half-2" />
+                    <input type="radio"
+                           name="rating-10"
+                           class="bg-green-500 mask mask-star-2 mask-half-1" />
+                    <input type="radio"
+                           name="rating-10"
+                           class="bg-green-500 mask mask-star-2 mask-half-2" />
+                    <input type="radio"
+                           name="rating-10"
+                           class="bg-green-500 mask mask-star-2 mask-half-1" />
+                    <input type="radio"
+                           name="rating-10"
+                           class="bg-green-500 mask mask-star-2 mask-half-2" />
+                </div>
+                {% for i in 5|times %}
+                    <input type="radio"
+                           name="rating-2"
+                           class="mask mask-star-2 bg-orange-400"
+                           readonly
+                           {% if i == course.average_rating %}{% endif %} />
+                {% endfor %}
+            <button class="btn btn-primary">Get Started</button>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,7 +1,13 @@
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import (
+    FileExtensionValidator,
+    MaxValueValidator,
+    MinValueValidator,
+    validate_image_file_extension,
+)
 from django.db import models
 import uuid
 from django.contrib.auth.models import User
+from django.db.models import Avg
 
 
 # Create your models here.
@@ -17,9 +23,16 @@ class BaseModel(models.Model):
 class CourseCategory(BaseModel):
     name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 
 def get_course_preview_file_path(instance, filename):
     return f"courses/{instance.id}/preview/{filename}"
+
+
+def get_course_thumbnail_file_path(instance, filename):
+    return f"courses/{instance.id}/thumbnail/{filename}"
 
 
 class Course(BaseModel):
@@ -29,8 +42,24 @@ class Course(BaseModel):
     description = models.TextField()
     language = models.CharField(max_length=100)
     price = models.FloatField()
-    preview = models.FileField(upload_to=get_course_preview_file_path)
+    preview = models.FileField(
+        upload_to=get_course_preview_file_path,
+        validators=[FileExtensionValidator(allowed_extensions=["mp4", "mkv", "webm"])],
+    )
+    thumbnail = models.ImageField(
+        upload_to=get_course_thumbnail_file_path,
+        validators=[validate_image_file_extension],
+        null=True,
+    )
     category = models.ForeignKey(CourseCategory, on_delete=models.CASCADE)
+
+    @property
+    def average_rating(self):
+        return (
+            round(self.courserating_set.aggregate(avg_val=Avg("rating"))["avg_val"], 2)
+            or 0
+        )
+
 
 class CourseRequirement(BaseModel):
     course = models.ForeignKey(

@@ -1,0 +1,28 @@
+{% if field.use_fieldset %}
+    <fieldset>
+        {% if field.label %}{{ field.legend_tag }}{% endif %}
+    {% else %}
+        {% if field.label %}{{ field.label_tag }}{% endif %}
+    {% endif %}
+    {% if field.help_text %}
+        <div class="helptext"
+             {% if field.auto_id %}id="{{ field.auto_id }}_helptext"{% endif %}>{{ field.help_text|safe }}</div>
+    {% endif %}
+    {{ field.errors }}
+    {{ field }}
+    {% if field.use_fieldset %}</fieldset>{% endif %}
+
+  {% if field.use_fieldset %}
+    <fieldset class="flex gap-2">
+        {% if field.label %}{{ field.legend_tag }}{% endif %}
+        {{ field }}
+    </fieldset>
+  {% else %}
+    {% if field.field.widget.input_type == "checkbox" %}
+      <div class="form-control">
+        <div class="label cursor-pointer">
+          <span class="label-text">{{ field.label }}</span>
+        </div>
+      </div>
+    {% endif %}
+  {% endif %}
