@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     "crispy_tailwind",
 ]
 
+CART_SESSION_ID = "cart"
+
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 
 CRISPY_TEMPLATE_PACK = "tailwind"

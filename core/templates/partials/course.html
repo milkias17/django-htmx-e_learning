@@ -1,0 +1,14 @@
+<div class="card w-96 bg-base-100 shadow-xl">
+    <figure>
+        {% if course.thumbnail %}<img src=" {{ course.thumbnail.url }} " alt="Course Picture" />{% endif %}
+    </figure>
+    <div class="card-body">
+        <h2 class="card-title">{{ course.title }}</h2>
+        <p>{{ course.short_description }}</p>
+        <div class="card-actions justify-end">
+            <a class="btn btn-primary"
+               href="{% url 'core:course_detail' pk=course.id %}">View Details</a>
+            <button class="btn btn-primary">Enroll</button>
+        </div>
+    </div>
+</div>

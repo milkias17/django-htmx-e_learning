@@ -52,13 +52,15 @@ class Course(BaseModel):
         null=True,
     )
     category = models.ForeignKey(CourseCategory, on_delete=models.CASCADE)
+    enrolled_users = models.ManyToManyField(to=User, related_name="enrolled_courses")
 
     @property
     def average_rating(self):
-        return (
-            round(self.courserating_set.aggregate(avg_val=Avg("rating"))["avg_val"], 2)
-            or 0
-        )
+        average = self.courserating_set.aggregate(avg_val=Avg("rating"))["avg_val"]
+        if not average:
+            return 0.0
+
+        return round(average, 2)
 
 
 class CourseRequirement(BaseModel):

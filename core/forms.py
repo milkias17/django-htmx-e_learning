@@ -71,7 +71,7 @@ class TestDatalist(forms.Form):
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        exclude = ["user"]
+        exclude = ["user", "enrolled_users"]
         widgets = {
             "preview": forms.FileInput(
                 attrs={"accept": "video/mp4,video/webm,video/ogg,video/mpeg"}

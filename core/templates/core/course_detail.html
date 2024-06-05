@@ -1,56 +1,61 @@
 {% extends "base.html" %}
 {% load core_filters %}
 {% block content %}
-    <div class="hero min-h-screen bg-base-200">
+    <div class="hero min-h-screen bg-base-200"
+         style="background-image: url({{ course.thumbnail.url }})">
         <div class="hero-content flex-col lg:flex-row-reverse">
-            <img src="https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.jpg"
-                 class="max-w-sm rounded-lg shadow-2xl" />
-            <div>
+            <video class="max-w-sm rounded-lg shadow-2xl" controls>
+                <source src="{{ course.preview.url }}">
+                Your browser doesn't support videos
+            </video>
+            <div class="glass p-8 rounded-lg">
                 <h1 class="text-5xl font-bold">{{ course.title }}</h1>
                 <p class="py-6">{{ course.short_description }}</p>
-                <div class="rating rating-lg rating-half">
-                    <input type="radio" name="rating-10" class="rating-hidden" />
-                    <input type="radio"
-                           name="rating-10"
-                           class="bg-green-500 mask mask-star-2 mask-half-1" />
-                    <input type="radio"
-                           name="rating-10"
-                           class="bg-green-500 mask mask-star-2 mask-half-2" />
-                    <input type="radio"
-                           name="rating-10"
-                           class="bg-green-500 mask mask-star-2 mask-half-1"
-                           checked />
-                    <input type="radio"
-                           name="rating-10"
-                           class="bg-green-500 mask mask-star-2 mask-half-2" />
-                    <input type="radio"
-                           name="rating-10"
-                           class="bg-green-500 mask mask-star-2 mask-half-1" />
-                    <input type="radio"
-                           name="rating-10"
-                           class="bg-green-500 mask mask-star-2 mask-half-2" />
-                    <input type="radio"
-                           name="rating-10"
-                           class="bg-green-500 mask mask-star-2 mask-half-1" />
-                    <input type="radio"
-                           name="rating-10"
-                           class="bg-green-500 mask mask-star-2 mask-half-2" />
-                    <input type="radio"
-                           name="rating-10"
-                           class="bg-green-500 mask mask-star-2 mask-half-1" />
-                    <input type="radio"
-                           name="rating-10"
-                           class="bg-green-500 mask mask-star-2 mask-half-2" />
+                <div class="flex items-center gap-2">
+                    {% if course.average_rating >= 4.7 %}<span class="badge badge-secondary badge-lg">Bestseller</span>{% endif %}
+                    <div class="flex items-center">
+                        <p class="text-green-500 text-lg">{{ course.average_rating }}</p>
+                        <div class="rating rating-half">
+                            <input type="radio"
+                                   name="rating-10"
+                                   class="rating-hidden"
+                                   disabled
+                                   {% if checked_star == 0 %}checked{% endif %}
+                                   readonly />
+                            {% for i in odd_even %}
+                                <input type="radio"
+                                       name="rating-10"
+                                       class="bg-green-500 mask mask-star-2 mask-half-{{ i }}"
+                                       readonly
+                                       disabled
+                                       aria-readonly="true"
+                                       {% if checked_star != 0 and checked_star == forloop.counter %}checked{% endif %} />
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <span class="text-sm text-primary-content">({{ course.courserating_set.count }} ratings)</span>
                 </div>
-                {% for i in 5|times %}
-                    <input type="radio"
-                           name="rating-2"
-                           class="mask mask-star-2 bg-orange-400"
-                           readonly
-                           {% if i == course.average_rating %}{% endif %} />
-                {% endfor %}
-            <button class="btn btn-primary">Get Started</button>
+                <br />
+                <div class="flex gap-4 items-center">
+                    <p class="text-sm">
+                        Created by <span class="text-info">{{ course.user.first_name }} {{ course.user.last_name }}</span>
+                    </p>
+                    <div class="flex items-center gap-1">
+                        <i data-feather="globe" class="w-4"></i>
+                        <p class="text-sm">{{ course.language }}</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    {% if not in_cart %}
+                        <button hx-swap="delete"
+                                hx-target="this"
+                                hx-post="{% url 'core:cart' %}"
+                                hx-vals='{"operation": "add", "course_id": "{{ course.id }}"}'
+                                class="btn btn-secondary mt-5">Add to Cart</button>
+                    {% endif %}
+                    <button class="btn btn-primary mt-5">Buy Now</button>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 {% endblock content %}
