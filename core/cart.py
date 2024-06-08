@@ -1,3 +1,4 @@
+from django.db.models import F, Sum
 from django.http import HttpRequest
 from django.conf import settings
 
@@ -48,6 +49,11 @@ class Cart:
 
     def save(self):
         self.session.modified = True
+
+    @property
+    def total_price(self):
+        course_price = Course.objects.filter(id__in=self.cart).aggregate(total=Sum(F("price")))
+        return course_price["total"] or 0
 
     def __contains__(self, course: Course | str):
         if not isinstance(course, str):

@@ -1,14 +1,21 @@
-<div class="card w-96 bg-base-100 shadow-xl">
+<div class="card w-96 bg-base-100 shadow-xl py-4">
     <figure>
         {% if course.thumbnail %}<img src=" {{ course.thumbnail.url }} " alt="Course Picture" />{% endif %}
     </figure>
     <div class="card-body">
         <h2 class="card-title">{{ course.title }}</h2>
         <p>{{ course.short_description }}</p>
+        <div class="flex items-center">
+            <p class="text-sm text-info">{{ course.user.first_name }} {{ course.user.last_name }}</p>
+            {% include "partials/course-rating.html" with course=course %}
+        </div>
+        <div class="flex items-center">
+            <i data-feather="dollar-sign" class="w-4"></i>
+            <span class="font-bold">{{ course.price }}</span>
+        </div>
         <div class="card-actions justify-end">
             <a class="btn btn-primary"
                href="{% url 'core:course_detail' pk=course.id %}">View Details</a>
-            <button class="btn btn-primary">Enroll</button>
         </div>
     </div>
 </div>

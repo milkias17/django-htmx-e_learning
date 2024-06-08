@@ -62,6 +62,10 @@ class Course(BaseModel):
 
         return round(average, 2)
 
+    @property
+    def checked_star(self):
+        return (round(self.average_rating * 2) / 2) * 2
+
 
 class CourseRequirement(BaseModel):
     course = models.ForeignKey(

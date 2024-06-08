@@ -6,6 +6,7 @@ node_modules/
 core/static/core/ui.css
 Session.vim
 media/
+db.sqlite3
 
 
 # C extensions

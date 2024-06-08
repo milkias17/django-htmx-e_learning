@@ -38,4 +38,8 @@ module.exports = {
   daisyui: {
     themes: ["corporate", "light", "dark", "luxury", "cupcake", "nord"],
   },
+  safelist: [
+    "mask-half-1",
+    "mask-half-2"
+  ]
 };

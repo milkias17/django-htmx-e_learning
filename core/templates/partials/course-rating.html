@@ -1,0 +1,22 @@
+{% load core_filters %}
+{% if course.average_rating >= 4.7 %}<span class="badge badge-secondary badge-lg">Bestseller</span>{% endif %}
+<div class="flex items-center">
+    <p class="text-info text-lg">{{ course.average_rating }}</p>
+    <div class="rating rating-half">
+        <input type="radio"
+               name="rating-10-course-{{ course.id }}"
+               class="rating-hidden"
+               disabled
+               {% if course.checked_star == 0 %}checked{% endif %}
+               readonly />
+        {% for i in 10|times %}
+            <input type="radio"
+                   name="rating-10-course-{{ course.id }}"
+                   class="bg-info mask mask-star-2 mask-half-{% cycle 1 2 %}"
+                   readonly
+                   disabled
+                   aria-readonly="true"
+                   {% if course.checked_star != 0 and course.checked_star == forloop.counter %}checked{% endif %} />
+        {% endfor %}
+    </div>
+</div>

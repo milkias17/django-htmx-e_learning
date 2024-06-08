@@ -21,6 +21,23 @@ class CoursesListView(ListView):
     template_name = "home.html"
     context_object_name = "courses"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class UserCourseListView(LoginRequiredMixin, ListView):
+    model = Course
+    template_name = "core/user_course_list.html"
+    context_object_name = "courses"
+
+    def get_queryset(self):
+        return self.request.user.enrolled_courses.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
 
 class CourseCreateView(GroupRequiredMixin, LoginRequiredMixin, CreateView):
     model = Course
@@ -44,7 +61,6 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
         average_rating = course.average_rating
         context["checked_star"] = (round(average_rating * 2) / 2) * 2
         context["num_stars"] = average_rating
-        context["odd_even"] = [(i % 2) + 1 for i in range(10)]
         cart = Cart(self.request)
         context["in_cart"] = course in cart
         return context
