@@ -1,22 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="flex flex-col items-center my-4 gap-4">
-        <div class="flex items-center gap-10">
-            <h1 class="text-center my-4 font-bold text-3xl">Courses in Cart</h1>
-            {% if cart|length > 0 %}
-                <button hx-target="body"
-                        hx-post="{% url 'core:cart' %}"
-                        hx-vals='{"operation": "checkout"}'
-                        class="btn btn-primary">
-                    Checkout
-                    <i data-feather="shopping-cart"></i>
-                </button>
-            {% endif %}
-        </div>
-        <div id="cart-courses">
+        <h1 class="text-center my-4 font-bold text-3xl">Courses in Cart</h1>
+        <div id="cart-courses" class="flex flex-col items-center">
             {% block courses %}
-                <div>
-                    {% if cart|length == 0 %}
+                {% if cart|length == 0 %}
+                    <div class="flex flex-col gap-2">
                         <div class="chat chat-start">
                             <div class="chat-bubble chat-bubble-primary">You have no courses in your cart:(</div>
                         </div>
@@ -28,7 +17,9 @@
                         <div class="chat chat-start">
                             <div class="chat-bubble chat-bubble-primary">I'll miss you when you're gone</div>
                         </div>
-                    {% endif %}
+                    </div>
+                {% endif %}
+                <div class="flex flex-col gap-4 lg:grid lg:grid-cols-4">
                     {% for course in cart %}
                         <div class="card w-96 bg-base-100 shadow-xl"
                              id="course-{{ forloop.counter }}">
@@ -56,6 +47,15 @@
                         </div>
                     {% endfor %}
                 </div>
+                {% if cart|length > 0 %}
+                    <button hx-target="body"
+                            hx-post="{% url 'core:cart' %}"
+                            hx-vals='{"operation": "checkout"}'
+                            class="btn btn-primary mt-8">
+                        Checkout
+                        <i data-feather="shopping-cart"></i>
+                    </button>
+                {% endif %}
             {% endblock courses %}
         </div>
     </div>

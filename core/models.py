@@ -41,7 +41,7 @@ class Course(BaseModel):
     short_description = models.CharField(max_length=100)
     description = models.TextField()
     language = models.CharField(max_length=100)
-    price = models.FloatField()
+    price = models.DecimalField(decimal_places=2, max_digits=5)
     preview = models.FileField(
         upload_to=get_course_preview_file_path,
         validators=[FileExtensionValidator(allowed_extensions=["mp4", "mkv", "webm"])],

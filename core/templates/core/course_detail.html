@@ -1,45 +1,55 @@
 {% extends "base.html" %}
 {% load core_filters %}
 {% block content %}
-    <div class="hero min-h-screen bg-base-200"
-         style="background-image: url({{ course.thumbnail.url }})">
-        <div class="hero-content flex-col lg:flex-row-reverse">
+    <div class="bg-secondary text-secondary-content flex items-center justify-around p-8 lg:p-24">
+        <div class="flex flex-col gap-3">
+            <h1 class="font-bold text-2xl text-secondary-content">{{ course.title }}</h1>
+            <p class="break-all whitespace-normal">{{ course.short_description }}</p>
+            <div class="flex gap-2 items-center">
+                {% include "partials/course-rating.html" with course=course %}
+                <span class="text-xs text-info">({{ course.courserating_set.count }} ratings)</span>
+                <span class="text-xs">{{ course.enrolled_users.count }} students</span>
+            </div>
+            <p class="text-xs">
+                Created by <span class="text-xs text-info">{{ course.user.first_name }} {{ course.user.last_name }}</span>
+            </p>
+            <div class="flex gap-4">
+                <div class="flex items-center gap-2">
+                    <i data-feather="alert-triangle" class="w-4"></i>
+                    <p class="text-sm">Last updated {{ course.updated_at|date:"n/Y" }}</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i data-feather="globe" class="w-4"></i>
+                    <span class="text-sm">English</span>
+                </div>
+            </div>
+            <div class="mt-8 flex gap-4 items-center">
+                {% if user in course.enrolled_users.all %}
+                    <div class="badge badge-lg badge-secondary">Course Bought!</div>
+                {% else %}
+                    {% if not in_cart %}
+                        <button hx-swap="delete"
+                                hx-target="this"
+                                hx-post="{% url 'core:cart' %}"
+                                hx-vals='{"operation": "add", "course_id": "{{ course.id }}"}'
+                                hx-indicator="#spinner"
+                                class="btn btn-primary">
+                            <i data-feather="shopping-cart" class="w-4"></i>
+                            Add to Cart
+                            <span id="spinner" class="loading loading-spinner app-indicator"></span>
+                        </button>
+                    {% endif %}
+                    <button class="btn btn-accent">
+                        Buy Now
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+        <div class="">
             <video class="max-w-sm rounded-lg shadow-2xl" controls>
                 <source src="{{ course.preview.url }}">
                 Your browser doesn't support videos
             </video>
-            <div class="glass p-8 rounded-lg bg-primary">
-                <h1 class="text-5xl font-bold">{{ course.title }}</h1>
-                <p class="py-6">{{ course.short_description }}</p>
-                <div class="flex items-center gap-2">
-                    {% include "partials/course-rating.html" with course=course %}
-                    <span class="text-sm text-primary-content">({{ course.courserating_set.count }} ratings)</span>
-                </div>
-                <br />
-                <div class="flex gap-4 items-center">
-                    <p class="text-sm">
-                        Created by <span class="text-info">{{ course.user.first_name }} {{ course.user.last_name }}</span>
-                    </p>
-                    <div class="flex items-center gap-1">
-                        <i data-feather="globe" class="w-4"></i>
-                        <p class="text-sm">{{ course.language }}</p>
-                    </div>
-                </div>
-                <div class="flex gap-2 mt-5">
-                    {% if user in course.enrolled_users.all %}
-                        <div class="badge badge-lg badge-secondary">Course Bought!</div>
-                    {% else %}
-                        {% if not in_cart %}
-                            <button hx-swap="delete"
-                                    hx-target="this"
-                                    hx-post="{% url 'core:cart' %}"
-                                    hx-vals='{"operation": "add", "course_id": "{{ course.id }}"}'
-                                    class="btn btn-secondary">Add to Cart</button>
-                        {% endif %}
-                        <button class="btn btn-primary">Buy Now</button>
-                    {% endif %}
-                </div>
-            </div>
         </div>
     </div>
 {% endblock content %}

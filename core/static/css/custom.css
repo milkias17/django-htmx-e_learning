@@ -1,0 +1,7 @@
+.app-indicator {
+  display: none;
+}
+
+.htmx-request.app-indicator{
+  display: inline;
+}

@@ -52,8 +52,12 @@ class Cart:
 
     @property
     def total_price(self):
-        course_price = Course.objects.filter(id__in=self.cart).aggregate(total=Sum(F("price")))
-        return course_price["total"] or 0
+        course_price = Course.objects.filter(id__in=self.cart).aggregate(total=Sum(F("price")))["total"]
+
+        if course_price:
+            return round(course_price, 2)
+
+        return 0
 
     def __contains__(self, course: Course | str):
         if not isinstance(course, str):

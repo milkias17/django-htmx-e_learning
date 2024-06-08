@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 
 from django.views.generic import CreateView, DetailView, ListView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django_htmx.http import trigger_client_event
 
 from core.cart import Cart
 from core.forms import CourseForm
@@ -69,6 +70,8 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
 class CartOperations(View):
     def get(self, request, *args, **kwargs):
         cart = Cart(request)
+        if request.htmx and not request.htmx.boosted:
+            return render(request, "partials/nav-cart-dropdown.html", {"cart": cart})
         return render(request, "core/cart.html", context={"cart": cart})
 
     def post(self, request: HttpRequest, *args, **kwargs):
@@ -88,10 +91,12 @@ class CartOperations(View):
                 cart.clear()
                 return redirect("core:index")
 
-        return HttpResponse(status=200)
+        response = HttpResponse(status=200)
+        return trigger_client_event(response, "refresh_nav_cart")
 
     def delete(self, request, *args, **kwargs):
         data = QueryDict(request.body)
         cart = Cart(request)
         cart.remove(data.get("course_id"))
-        return render_html_block("core/cart.html", "courses", {"cart": cart}, request)
+        response =  render_html_block("core/cart.html", "courses", {"cart": cart}, request)
+        return trigger_client_event(response, "refresh_nav_cart")
