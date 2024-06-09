@@ -36,10 +36,7 @@ class CoursesListView(FilterView):
     template_name = "home.html"
     context_object_name = "courses"
     filterset_class = CourseFilter
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+    queryset = Course.objects.order_by("-updated_at")
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.htmx and not self.request.htmx.boosted:
@@ -63,7 +60,7 @@ class UserCourseListView(LoginRequiredMixin, ListView):
         return context
 
 
-class TestCourseCreateView(LoginRequiredMixin, SessionWizardView):
+class CourseCreateView(LoginRequiredMixin, SessionWizardView):
     form_list = [
         CourseForm,
         modelformset_factory(CourseRequirement, form=CourseRequirementForm, extra=5),
@@ -93,17 +90,23 @@ class TestCourseCreateView(LoginRequiredMixin, SessionWizardView):
         return redirect("core:index")
 
 
-class CourseCreateView(LoginRequiredMixin, CreateView):
+class CreatedCoursesListView(LoginRequiredMixin, ListView):
     model = Course
-    queryset = Course.objects.order_by("-created_at")
-    template_name_suffix = "_create_form"
-    form_class = CourseForm
-    success_url = reverse_lazy("core:index")
-    group_required = "creator"
+    template_name = "core/my_courses.html"
+    context_object_name = "courses"
+    queryset = Course.objects.order_by("-updated_at")
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.htmx and not self.request.htmx.boosted:
+            time.sleep(1)
+            return render_html_block(
+                self.template_name, "course_list", context, self.request
+            )
+        return super().render_to_response(context, **response_kwargs)
+
+    def get_queryset(self):
+        org = super().get_queryset()
+        return org.filter(user=self.request.user)
 
 
 class CourseDetailView(LoginRequiredMixin, DetailView):

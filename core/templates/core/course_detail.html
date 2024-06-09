@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% load core_filters %}
 {% block content %}
-    <div class="bg-secondary text-secondary-content flex items-center justify-around p-8 lg:p-24">
-        <div class="flex flex-col gap-3">
+    <div class="bg-secondary text-secondary-content flex items-center py-8 lg:py-24">
+        <div class="flex flex-col gap-3 basis-1/2 ml-36">
             <h1 class="font-bold text-2xl text-secondary-content">{{ course.title }}</h1>
             <p class="break-all whitespace-normal">{{ course.short_description }}</p>
             <div class="flex gap-2 items-center">
@@ -51,11 +51,25 @@
                 {% endblock course_actions %}
             </div>
         </div>
-        <div class="">
+        <div class="basis-1/2 flex justify-center">
             <video class="max-w-sm rounded-lg shadow-2xl" controls>
                 <source src="{{ course.preview.url }}">
                 Your browser doesn't support videos
             </video>
+        </div>
+    </div>
+    <div class="ml-8 md:ml-24 lg:ml-36 my-14 flex">
+        <div class="basis-1/2 prose">
+            <h2>Requirements</h2>
+            <ul>
+                {% for requirement in course.requirements.all %}<li>{{ requirement }}</li>{% endfor %}
+            </ul>
+        </div>
+        <div class="prose">
+            <h2>Who this course is for</h2>
+            <ul>
+                {% for audience in course.audience.all %}<li>{{ audience }}</li>{% endfor %}
+            </ul>
         </div>
     </div>
 {% endblock content %}

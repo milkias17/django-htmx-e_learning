@@ -73,12 +73,18 @@ class CourseRequirement(BaseModel):
     )
     description = models.TextField(verbose_name="Requirement")
 
+    def __str__(self):
+        return self.description
+
 
 class CourseAudience(BaseModel):
     course = models.ForeignKey(
         Course, on_delete=models.CASCADE, related_name="audience"
     )
     description = models.TextField(verbose_name="Who is this course for?")
+
+    def __str__(self):
+        return self.description
 
 
 class CourseSection(BaseModel):
