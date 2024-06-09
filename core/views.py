@@ -76,8 +76,20 @@ class TestCourseCreateView(LoginRequiredMixin, SessionWizardView):
     template_name = "core/wizard_form.html"
 
     def done(self, form_list, form_dict, **kwargs):
-        print(form_list)
-        print(form_dict)
+        course_form = form_dict["0"]
+        course = course_form.save(commit=False)
+        course.user = self.request.user
+        course.save()
+
+        course_requirements = form_dict["1"].save(commit=False)
+        for course_requirement in course_requirements:
+            course_requirement.course = course
+            course_requirement.save()
+
+        course_audiences = form_dict["2"].save(commit=False)
+        for course_audience in course_audiences:
+            course_audience.course = course
+            course_audience.save()
         return redirect("core:index")
 
 
