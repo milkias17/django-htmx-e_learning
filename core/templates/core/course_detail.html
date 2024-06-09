@@ -23,26 +23,32 @@
                     <span class="text-sm">English</span>
                 </div>
             </div>
-            <div class="mt-8 flex gap-4 items-center">
-                {% if user in course.enrolled_users.all %}
-                    <div class="badge badge-lg badge-secondary">Course Bought!</div>
-                {% else %}
-                    {% if not in_cart %}
-                        <button hx-swap="delete"
-                                hx-target="this"
-                                hx-post="{% url 'core:cart' %}"
-                                hx-vals='{"operation": "add", "course_id": "{{ course.id }}"}'
-                                hx-indicator="#spinner"
-                                class="btn btn-primary">
-                            <i data-feather="shopping-cart" class="w-4"></i>
-                            Add to Cart
-                            <span id="spinner" class="loading loading-spinner app-indicator"></span>
+            <div id="course-actions" class="mt-8 flex gap-4 items-center">
+                {% block course_actions %}
+                    {% if user in course.enrolled_users.all %}
+                        <div class="badge badge-lg badge-primary">Course Bought!</div>
+                    {% else %}
+                        {% if not in_cart %}
+                            <button hx-swap="delete"
+                                    hx-target="this"
+                                    hx-post="{% url 'core:cart' %}"
+                                    hx-vals='{"operation": "add", "course_id": "{{ course.id }}"}'
+                                    hx-indicator="#spinner"
+                                    class="btn btn-primary">
+                                <i data-feather="shopping-cart" class="w-4"></i>
+                                Add to Cart
+                                <span id="spinner" class="loading loading-spinner app-indicator"></span>
+                            </button>
+                        {% endif %}
+                        <button class="btn btn-accent"
+                                hx-target="#course-actions"
+                                hx-post="{% url 'core:course_detail' pk=course.id %}"
+                                hx-indicator="#bought-spinner">
+                            Buy Now
+                            <span id="bought-spinner" class="loading loading-spinner app-indicator"></span>
                         </button>
                     {% endif %}
-                    <button class="btn btn-accent">
-                        Buy Now
-                    </button>
-                {% endif %}
+                {% endblock course_actions %}
             </div>
         </div>
         <div class="">

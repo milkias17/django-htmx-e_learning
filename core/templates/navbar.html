@@ -13,8 +13,19 @@
             </div>
             <ul tabIndex="0"
                 class="dropdown-content menu p-2 shadow bg-base-100 w-52 text-black z-50">
+                <li>
+                    <button hx-get="{% url 'core:index' %}"
+                            hx-target="#main-course-list"
+                            hx-push-url="true"
+                            hx-indicator=".course-skeleton">All</button>
+                </li>
                 {% for category in course_categories %}
-                  <li>{{ category.name }}</li>
+                    <li>
+                        <button hx-get="{% url 'core:index' %}?category={{ category.id }}"
+                                hx-target="#main-course-list"
+                                hx-indicator=".course-skeleton"
+                                hx-push-url="true">{{ category.name }}</button>
+                    </li>
                 {% endfor %}
             </ul>
         </div>
@@ -22,7 +33,11 @@
     <div class="flex-none">
         {% include "partials/nav-cart-dropdown.html" with cart=cart %}
         <div class="dropdown dropdown-end">
-            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+            <div x-data="{open: false}"
+                 @click=" if (open) { $el.blur(); } open = !open "
+                 tabindex="0"
+                 role="button"
+                 class="btn btn-ghost btn-circle avatar">
                 <div class="w-10 rounded-full">
                     <img alt="Tailwind CSS Navbar component" src="{% static "img/default-user-img.jpg" %}" />
                 </div>
@@ -33,7 +48,10 @@
                     <a>Profile</a>
                 </li>
                 <li>
-                    <a href="{% url 'core:user_courses' %}">My Courses</a>
+                    <a href="">My Courses</a>
+                </li>
+                <li>
+                    <a href="{% url 'core:user_courses' %}">Bought Courses</a>
                 </li>
                 <li>
                     <a>Settings</a>

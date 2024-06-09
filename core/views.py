@@ -1,3 +1,7 @@
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+import os
+from django.forms import modelformset_factory
 from django.http import HttpRequest, HttpResponse, QueryDict
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -5,10 +9,14 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_htmx.http import trigger_client_event
+import django_filters
+from django_filters.views import FilterView
+import time
+from formtools.wizard.views import SessionWizardView
 
 from core.cart import Cart
-from core.forms import CourseForm
-from core.models import Course
+from core.forms import CourseAudienceForm, CourseForm, CourseRequirementForm
+from core.models import Course, CourseAudience, CourseRequirement
 from core.utils import render_html_block
 from udemy.auth_utils import GroupRequiredMixin
 
@@ -17,14 +25,29 @@ def home(request):
     return render(request, "home.html")
 
 
-class CoursesListView(ListView):
+class CourseFilter(django_filters.FilterSet):
+    class Meta:
+        model = Course
+        fields = ["title", "category"]
+
+
+class CoursesListView(FilterView):
     model = Course
     template_name = "home.html"
     context_object_name = "courses"
+    filterset_class = CourseFilter
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.htmx and not self.request.htmx.boosted:
+            time.sleep(1)
+            return render_html_block(
+                self.template_name, "course_list", context, self.request
+            )
+        return super().render_to_response(context, **response_kwargs)
 
 
 class UserCourseListView(LoginRequiredMixin, ListView):
@@ -40,7 +63,25 @@ class UserCourseListView(LoginRequiredMixin, ListView):
         return context
 
 
-class CourseCreateView(GroupRequiredMixin, LoginRequiredMixin, CreateView):
+class TestCourseCreateView(LoginRequiredMixin, SessionWizardView):
+    form_list = [
+        CourseForm,
+        modelformset_factory(CourseRequirement, form=CourseRequirementForm, extra=5),
+        modelformset_factory(CourseAudience, form=CourseAudienceForm, extra=5),
+    ]
+    file_storage = FileSystemStorage(
+        location=os.path.join(settings.MEDIA_ROOT, "tmp/courses")
+    )
+
+    template_name = "core/wizard_form.html"
+
+    def done(self, form_list, form_dict, **kwargs):
+        print(form_list)
+        print(form_dict)
+        return redirect("core:index")
+
+
+class CourseCreateView(LoginRequiredMixin, CreateView):
     model = Course
     queryset = Course.objects.order_by("-created_at")
     template_name_suffix = "_create_form"
@@ -66,6 +107,21 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
         context["in_cart"] = course in cart
         return context
 
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        self.object = course = self.get_object()
+        user.enrolled_courses.add(course)
+        user.save()
+        cart = Cart(self.request)
+        cart.remove(str(course.id))
+        context = self.get_context_data()
+        return render_html_block(
+            "core/course_detail.html",
+            "course_actions",
+            context=context,
+            request=self.request,
+        )
+
 
 class CartOperations(View):
     def get(self, request, *args, **kwargs):
@@ -80,7 +136,6 @@ class CartOperations(View):
 
         match operation:
             case "add":
-                print("Add to cart: ", request.POST.get("course_id"))
                 cart.add(request.POST.get("course_id"))
             case "clear":
                 cart.clear()
@@ -98,5 +153,7 @@ class CartOperations(View):
         data = QueryDict(request.body)
         cart = Cart(request)
         cart.remove(data.get("course_id"))
-        response =  render_html_block("core/cart.html", "courses", {"cart": cart}, request)
+        response = render_html_block(
+            "core/cart.html", "courses", {"cart": cart}, request
+        )
         return trigger_client_event(response, "refresh_nav_cart")

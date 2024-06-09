@@ -36,16 +36,9 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [require("daisyui")],
+  plugins: [require("@tailwindcss/typography"), require("daisyui")],
   daisyui: {
-    themes: [
-      "emerald",
-      "corporate",
-      "light",
-      "dark",
-      "cupcake",
-      "halloween",
-    ],
+    themes: ["emerald", "corporate", "light", "dark", "cupcake", "halloween"],
   },
   safelist: ["mask-half-1", "mask-half-2"],
 };

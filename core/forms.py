@@ -2,7 +2,7 @@ from django import forms
 from django.forms.widgets import Select, TextInput
 from django.utils.safestring import mark_safe
 
-from core.models import Course
+from core.models import Course, CourseAudience, CourseRequirement
 
 
 class DatalistTextInput(TextInput):
@@ -77,3 +77,15 @@ class CourseForm(forms.ModelForm):
                 attrs={"accept": "video/mp4,video/webm,video/ogg,video/mpeg"}
             )
         }
+
+
+class CourseRequirementForm(forms.ModelForm):
+    class Meta:
+        model = CourseRequirement
+        fields = ["description"]
+
+
+class CourseAudienceForm(forms.ModelForm):
+    class Meta:
+        model = CourseAudience
+        fields = ["description"]

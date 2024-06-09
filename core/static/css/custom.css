@@ -2,6 +2,10 @@
   display: none;
 }
 
-.htmx-request.app-indicator{
+.htmx-request.app-indicator {
   display: inline;
+}
+
+.course-skeleton.htmx-request ~ .course-card {
+  display: none;
 }
