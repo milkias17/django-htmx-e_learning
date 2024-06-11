@@ -1,7 +1,7 @@
 import random
 
 from django.db import transaction
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandParser
 
 from core.factories import CourseFactory, UserFactory
 
@@ -11,8 +11,12 @@ NUM_THREADS = 12
 COMMENTS_PER_THREAD = 25
 USERS_PER_CLUB = 8
 
+
 class Command(BaseCommand):
     help = "Generates test data"
+
+    def add_arguments(self, parser: CommandParser) -> None:
+        parser.add_argument("num_courses", type=int)
 
     @transaction.atomic
     def handle(self, *args, **kwargs):
@@ -21,7 +25,7 @@ class Command(BaseCommand):
         # for m in models:
         #     m.objects.all().delete()
 
-        self.stdout.write("Creating new data...")
+        num_courses = kwargs.get("num_courses") or NUM_COURSES
+        self.stdout.write("Creating " + str(num_courses) + "....")
         # Create all the users
-        for _ in range(NUM_COURSES):
-            course = CourseFactory()
+        CourseFactory.create_batch(num_courses)

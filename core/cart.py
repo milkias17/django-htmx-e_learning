@@ -51,8 +51,14 @@ class Cart:
         self.session.modified = True
 
     @property
+    def courses(self):
+        return Course.objects.filter(id__in=self.cart)
+
+    @property
     def total_price(self):
-        course_price = Course.objects.filter(id__in=self.cart).aggregate(total=Sum(F("price")))["total"]
+        course_price = Course.objects.filter(id__in=self.cart).aggregate(
+            total=Sum(F("price"))
+        )["total"]
 
         if course_price:
             return round(course_price, 2)

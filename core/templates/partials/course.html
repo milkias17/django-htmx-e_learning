@@ -1,13 +1,21 @@
-<div class="card w-96 bg-base-100 shadow-xl py-4 course-card">
+{% load core_filters %}
+<div class="card w-96 bg-base-100 shadow-xl py-4 course-card"
+     {% if page_obj.has_next and last %}
+         hx-get="{% url 'core:index' %}?page={{ page_obj.next_page_number }}&{% query_string request.GET %}" hx-trigger="revealed" hx-swap="afterend transition:true" hx-indicator=".course-skeleton"
+     {% endif %}>
     <figure>
-        {% if course.thumbnail %}<img src=" {{ course.thumbnail.url }} " alt="Course Picture" />{% endif %}
+        {% if course.thumbnail %}
+            <img src="{{ course.thumbnail.url }}" alt="Course Picture" loading="lazy" />
+        {% endif %}
     </figure>
     <div class="card-body">
         <h2 class="card-title">{{ course.title }}</h2>
         <span class="text-xs text-accent">{{ course.category }}</span>
         <p>{{ course.short_description }}</p>
         <div class="flex items-center">
-            <p class="text-sm text-info">{{ course.user.first_name }} {{ course.user.last_name }}</p>
+            <p class="text-sm text-info">
+                {{ course.user.first_name }} {{ course.user.last_name }}
+            </p>
             {% include "partials/course-rating.html" with course=course %}
         </div>
         <div class="flex items-center">
@@ -16,7 +24,7 @@
         </div>
         <div class="card-actions justify-end">
             <a class="btn btn-primary"
-               href="{% url 'core:course_detail' pk=course.id %}">View Details</a>
+               href=" {% if is_creator %} {{ course.creator_detail_url }} {% else %} {% url 'core:course_detail' pk=course.id %} {% endif %} ">View Details</a>
         </div>
     </div>
 </div>

@@ -5,10 +5,19 @@
     <link href="{% static "core/home.css" %}" rel="stylesheet">
 {% endblock statics %}
 {% block content %}
-    <h1 class="text-3xl font-bold text-center text-primary-content my-8">Here are some of our course offerings</h1>
+    <h1 class="text-3xl font-bold text-center text-primary-content my-8">
+        Here are some of our course offerings
+    </h1>
     <main id="main-course-list"
           class="m-4 md:m-8 flex flex-wrap lg:grid lg:grid-cols-4 gap-4">
         {% block course_list %}
+            {% for course in courses %}
+                {% if forloop.last %}
+                    {% include "partials/course.html" with last=True %}
+                {% else %}
+                    {% include "partials/course.html" %}
+                {% endif %}
+            {% endfor %}
             {% for i in 8|times %}
                 <div id="#course-skeleton-{{ i }}"
                      hx-preserve
@@ -33,9 +42,6 @@
                         </div>
                     </div>
                 </div>
-            {% endfor %}
-            {% for course in courses %}
-                {% include "partials/course.html" %}
             {% endfor %}
         {% endblock course_list %}
     </main>

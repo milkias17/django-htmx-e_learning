@@ -10,6 +10,15 @@
   display: none;
 }
 
+#main-course-list.htmx-request .app-indicator {
+  display: inline;
+}
+
+#main-course-list.htmx-request .course-card {
+  display: none;
+}
+
+
 .message-alert {
   animation: remove-element 2s forwards;
   animation-delay: 2s;

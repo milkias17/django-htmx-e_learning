@@ -43,7 +43,7 @@
                 </div>
             {% endfor %}
             {% for course in courses %}
-                {% include "partials/course.html" %}
+                {% include "partials/course.html" with is_creator=is_creator %}
             {% endfor %}
         {% endblock course_list %}
     </main>

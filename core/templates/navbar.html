@@ -17,14 +17,14 @@
                     <button hx-get="{% url 'core:index' %}"
                             hx-target="#main-course-list"
                             hx-push-url="true"
-                            hx-indicator=".course-skeleton">All</button>
+                            hx-indicator="#main-course-list">All</button>
                 </li>
                 {% for category in course_categories %}
                     <li>
-                        {% if request.url == "/" %}
+                        {% if request.path == "/" %}
                             <button hx-get="{% url 'core:index' %}?category={{ category.id }}"
                                     hx-target="#main-course-list"
-                                    hx-indicator=".course-skeleton"
+                                    hx-indicator="#main-course-list"
                                     hx-push-url="true">
                                 {{ category.name }}
                             </button>

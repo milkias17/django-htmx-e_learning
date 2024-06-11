@@ -8,6 +8,8 @@ from django.db import models
 import uuid
 from django.contrib.auth.models import User
 from django.db.models import Avg
+from django.urls import reverse_lazy
+from core.transactions import chapa
 
 
 # Create your models here.
@@ -53,6 +55,10 @@ class Course(BaseModel):
     )
     category = models.ForeignKey(CourseCategory, on_delete=models.CASCADE)
     enrolled_users = models.ManyToManyField(to=User, related_name="enrolled_courses")
+
+    @property
+    def creator_detail_url(self):
+        return reverse_lazy("core:creator_detail_url", kwargs={"pk": self.id})
 
     @property
     def average_rating(self):
@@ -116,3 +122,56 @@ class CourseRating(BaseModel):
         validators=[MinValueValidator(0), MaxValueValidator(5)]
     )
     review = models.TextField()
+
+
+class TransactionStatus(models.TextChoices):
+    CREATED = "Created", "CREATED"
+    PENDING = "Pending", "PENDING"
+    SUCCESS = "Success", "SUCCESS"
+    FAILED = "Failed", "FAILED"
+
+
+class Transaction(BaseModel):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="transactions"
+    )
+    courses = models.ManyToManyField(Course)
+    amount = models.FloatField()
+    currency = models.CharField(max_length=25, default="ETB")
+
+    payment_title = models.CharField(max_length=255, default="Payment")
+    description = models.TextField(null=True, blank=True)
+
+    status = models.CharField(
+        max_length=50, choices=TransactionStatus, default=TransactionStatus.CREATED
+    )
+
+    response_dump = models.JSONField(
+        default=dict, blank=True
+    )  # incase the response is valuable in the future
+    checkout_url = models.URLField(null=True, blank=True)
+
+    @staticmethod
+    def initialize(user: User, amount: float, courses: list[Course]):
+        transaction = Transaction(user=user, amount=amount)
+        transaction.save()
+        for course in courses:
+            transaction.courses.add(course)
+        transaction.save()
+        response = chapa.initialize(
+            email=user.email,
+            amount=amount,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            tx_ref=transaction.id,
+            customization={"title": "Udemy"},
+            return_url="http://localhost:8000" + reverse_lazy("core:index"),
+        )
+        if response["status"] == "failed":
+            transaction.status = TransactionStatus.FAILED
+            transaction.save()
+            return transaction
+
+        transaction.checkout_url = response["data"]["checkout_url"]
+        transaction.save()
+        return transaction

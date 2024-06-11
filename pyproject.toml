@@ -22,11 +22,13 @@ chapa = "^0.1.2"
 [tool.poetry.group.dev.dependencies]
 django-stubs = "^5.0.2"
 factory-boy = "^3.3.0"
+python-dotenv = "^1.0.1"
 
 [tool.djlint]
 profile = "django"
 max_line_length=80
 preserve_blank_lines=true
+format_attribute_template_tags=true
 
 [build-system]
 requires = ["poetry-core"]

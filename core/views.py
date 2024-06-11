@@ -1,3 +1,4 @@
+import json
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import os
@@ -10,7 +11,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, DetailView, ListView, View
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django_htmx.http import reswap, retarget, trigger_client_event
+from django_htmx.http import HttpResponseClientRedirect, reswap, retarget, trigger_client_event
 import django_filters
 from django_filters.views import FilterView
 import time
@@ -18,7 +19,13 @@ from formtools.wizard.views import SessionWizardView
 
 from core.cart import Cart
 from core.forms import CourseAudienceForm, CourseForm, CourseRequirementForm
-from core.models import Course, CourseAudience, CourseRequirement
+from core.models import (
+    Course,
+    CourseAudience,
+    CourseRequirement,
+    Transaction,
+    TransactionStatus,
+)
 from core.utils import inject_messages, render_html_block
 from udemy.auth_utils import GroupRequiredMixin
 
@@ -39,6 +46,7 @@ class CoursesListView(FilterView):
     context_object_name = "courses"
     filterset_class = CourseFilter
     queryset = Course.objects.order_by("-updated_at")
+    paginate_by = 16
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.htmx and not self.request.htmx.boosted:
@@ -102,6 +110,15 @@ class CreatedCoursesListView(LoginRequiredMixin, ListView):
         courses = super().get_queryset()
         return courses.filter(user=self.request.user)
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["creator"] = True
+        return context
+
+
+class CreatorCourseDetailView(LoginRequiredMixin, DetailView):
+    model = Course
+
 
 @method_decorator(inject_messages, name="post")
 class CourseDetailView(LoginRequiredMixin, DetailView):
@@ -152,27 +169,30 @@ class CartOperations(View):
         operation = self.request.POST.get("operation")
         cart = Cart(request)
 
-        course = get_object_or_404(Course, pk=request.POST.get("course_id"))
-        if course.user == request.user:
-            messages.error(request, "You can't buy your own course :( ")
-            response = HttpResponse(status=200)
-            reswap(response, "none")
-            return trigger_client_event(response, "refresh_nav_cart")
-
         match operation:
             case "add":
                 cart.add(request.POST.get("course_id"))
+                course = get_object_or_404(Course, pk=request.POST.get("course_id"))
+                if course.user == request.user:
+                    messages.error(request, "You can't buy your own course 󰱶")
+                    response = HttpResponse(status=200)
+                    reswap(response, "none")
+                    return trigger_client_event(response, "refresh_nav_cart")
+
                 messages.success(request, "Course Added to Cart!")
             case "clear":
                 cart.clear()
                 messages.success(request, "Cart Cleared!")
             case "checkout":
                 user = self.request.user
-                user.enrolled_courses.add(*cart.cart)
-                user.save()
-                cart.clear()
-                messages.success(request, "Cart Checkout Successful!")
-                return redirect("core:index")
+                transaction = Transaction.initialize(
+                    user, cart.total_price, courses=cart.courses
+                )
+                if transaction.status == TransactionStatus.FAILED:
+                    messages.error(request, "Error Processing your buy request")
+                else:
+                    cart.clear()
+                    return HttpResponseClientRedirect(transaction.checkout_url)
 
         response = HttpResponse(status=200)
         return trigger_client_event(response, "refresh_nav_cart")
@@ -186,3 +206,9 @@ class CartOperations(View):
         )
         messages.success(request, "Course removed from cart!")
         return trigger_client_event(response, "refresh_nav_cart")
+
+def handle_successful_payment(request: HttpRequest):
+    body = request.body
+    data = json.loads(body)
+    print(data)
+    return HttpResponse(data, status=200)
