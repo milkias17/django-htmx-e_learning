@@ -21,10 +21,16 @@
                 </li>
                 {% for category in course_categories %}
                     <li>
-                        <button hx-get="{% url 'core:index' %}?category={{ category.id }}"
-                                hx-target="#main-course-list"
-                                hx-indicator=".course-skeleton"
-                                hx-push-url="true">{{ category.name }}</button>
+                        {% if request.url == "/" %}
+                            <button hx-get="{% url 'core:index' %}?category={{ category.id }}"
+                                    hx-target="#main-course-list"
+                                    hx-indicator=".course-skeleton"
+                                    hx-push-url="true">
+                                {{ category.name }}
+                            </button>
+                        {% else %}
+                            <a href="{% url 'core:index' %}?category={{ category.id }}">{{ category.name }}</a>
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
@@ -57,7 +63,9 @@
                     <a>Settings</a>
                 </li>
                 <li>
-                    <button hx-post="{% url 'logout' %}" hx-target="body">Logout</button>
+                    <button hx-post="{% url 'logout' %}" hx-target="body" hx-push-url="true">
+                        Logout
+                    </button>
                 </li>
             </ul>
         </div>

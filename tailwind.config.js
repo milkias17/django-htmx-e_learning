@@ -40,5 +40,12 @@ module.exports = {
   daisyui: {
     themes: ["emerald", "corporate", "light", "dark", "cupcake", "halloween"],
   },
-  safelist: ["mask-half-1", "mask-half-2"],
+  safelist: [
+    "mask-half-1",
+    "mask-half-2",
+    "alert-info",
+    "alert-success",
+    "alert-warning",
+    "alert-error",
+  ],
 };

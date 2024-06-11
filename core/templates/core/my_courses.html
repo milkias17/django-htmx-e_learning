@@ -5,7 +5,15 @@
     <link href="{% static "core/home.css" %}" rel="stylesheet">
 {% endblock statics %}
 {% block content %}
-    <h1 class="text-3xl font-bold text-center text-primary-content my-8">Your Courses</h1>
+    <div class="flex items-center my-8 gap-4 px-8">
+        <h1 class="text-3xl font-bold text-center text-primary-content flex-1">
+            Your Courses
+        </h1>
+        <a class="btn btn-primary self-center" href="{% url 'core:course_create' %}">
+            <i data-feather="plus"></i>
+            Create Course
+        </a>
+    </div>
     <main id="main-course-list"
           class="m-4 md:m-8 flex flex-wrap lg:grid lg:grid-cols-4 gap-4">
         {% block course_list %}

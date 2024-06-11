@@ -17,6 +17,7 @@ django-htmx = "^1.17.3"
 django-render-block = "^0.9.2"
 django-filter = "^24.2"
 django-formtools = "^2.5.1"
+chapa = "^0.1.2"
 
 [tool.poetry.group.dev.dependencies]
 django-stubs = "^5.0.2"
@@ -24,6 +25,8 @@ factory-boy = "^3.3.0"
 
 [tool.djlint]
 profile = "django"
+max_line_length=80
+preserve_blank_lines=true
 
 [build-system]
 requires = ["poetry-core"]

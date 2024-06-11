@@ -9,3 +9,19 @@
 .course-skeleton.htmx-request ~ .course-card {
   display: none;
 }
+
+.message-alert {
+  animation: remove-element 2s forwards;
+  animation-delay: 2s;
+}
+
+@keyframes remove-element {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}

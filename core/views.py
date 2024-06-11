@@ -3,12 +3,14 @@ from django.core.files.storage import FileSystemStorage
 import os
 from django.forms import modelformset_factory
 from django.http import HttpRequest, HttpResponse, QueryDict
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 
+from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, DetailView, ListView, View
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django_htmx.http import trigger_client_event
+from django_htmx.http import reswap, retarget, trigger_client_event
 import django_filters
 from django_filters.views import FilterView
 import time
@@ -17,7 +19,7 @@ from formtools.wizard.views import SessionWizardView
 from core.cart import Cart
 from core.forms import CourseAudienceForm, CourseForm, CourseRequirementForm
 from core.models import Course, CourseAudience, CourseRequirement
-from core.utils import render_html_block
+from core.utils import inject_messages, render_html_block
 from udemy.auth_utils import GroupRequiredMixin
 
 
@@ -87,7 +89,7 @@ class CourseCreateView(LoginRequiredMixin, SessionWizardView):
         for course_audience in course_audiences:
             course_audience.course = course
             course_audience.save()
-        return redirect("core:index")
+        return redirect(self.request.META.get("HTTP_REFERER"))
 
 
 class CreatedCoursesListView(LoginRequiredMixin, ListView):
@@ -96,19 +98,12 @@ class CreatedCoursesListView(LoginRequiredMixin, ListView):
     context_object_name = "courses"
     queryset = Course.objects.order_by("-updated_at")
 
-    def render_to_response(self, context, **response_kwargs):
-        if self.request.htmx and not self.request.htmx.boosted:
-            time.sleep(1)
-            return render_html_block(
-                self.template_name, "course_list", context, self.request
-            )
-        return super().render_to_response(context, **response_kwargs)
-
     def get_queryset(self):
-        org = super().get_queryset()
-        return org.filter(user=self.request.user)
+        courses = super().get_queryset()
+        return courses.filter(user=self.request.user)
 
 
+@method_decorator(inject_messages, name="post")
 class CourseDetailView(LoginRequiredMixin, DetailView):
     model = Course
 
@@ -125,6 +120,12 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
     def post(self, request, *args, **kwargs):
         user = self.request.user
         self.object = course = self.get_object()
+        if course.user == user:
+            messages.error(request, "You can't buy your own course")
+            response = HttpResponse(status=200)
+            reswap(response, "none")
+            return response
+
         user.enrolled_courses.add(course)
         user.save()
         cart = Cart(self.request)
@@ -138,6 +139,8 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
         )
 
 
+@method_decorator(inject_messages, name="post")
+@method_decorator(inject_messages, name="delete")
 class CartOperations(View):
     def get(self, request, *args, **kwargs):
         cart = Cart(request)
@@ -149,16 +152,26 @@ class CartOperations(View):
         operation = self.request.POST.get("operation")
         cart = Cart(request)
 
+        course = get_object_or_404(Course, pk=request.POST.get("course_id"))
+        if course.user == request.user:
+            messages.error(request, "You can't buy your own course :( ")
+            response = HttpResponse(status=200)
+            reswap(response, "none")
+            return trigger_client_event(response, "refresh_nav_cart")
+
         match operation:
             case "add":
                 cart.add(request.POST.get("course_id"))
+                messages.success(request, "Course Added to Cart!")
             case "clear":
                 cart.clear()
+                messages.success(request, "Cart Cleared!")
             case "checkout":
                 user = self.request.user
                 user.enrolled_courses.add(*cart.cart)
                 user.save()
                 cart.clear()
+                messages.success(request, "Cart Checkout Successful!")
                 return redirect("core:index")
 
         response = HttpResponse(status=200)
@@ -171,4 +184,5 @@ class CartOperations(View):
         response = render_html_block(
             "core/cart.html", "courses", {"cart": cart}, request
         )
+        messages.success(request, "Course removed from cart!")
         return trigger_client_event(response, "refresh_nav_cart")
