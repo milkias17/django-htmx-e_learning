@@ -4,6 +4,7 @@ from django.contrib.messages import get_messages
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
+from django_htmx.http import HttpResponseClientRedirect
 from render_block import render_block_to_string
 
 
@@ -13,6 +14,9 @@ def htmx_redirect(request, url=None):
 
     if not request.htmx:
         return redirect(url)
+
+    response = HttpResponseClientRedirect(url)
+    return response
 
 
 def render_html_block(template_name: str, block_name: str, context: dict, request):

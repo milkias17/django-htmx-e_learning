@@ -4,6 +4,7 @@ from django.core.validators import (
     MinValueValidator,
     validate_image_file_extension,
 )
+import logging
 from django.db import models
 import uuid
 from django.contrib.auth.models import User
@@ -57,10 +58,6 @@ class Course(BaseModel):
     enrolled_users = models.ManyToManyField(to=User, related_name="enrolled_courses")
 
     @property
-    def creator_detail_url(self):
-        return reverse_lazy("core:creator_detail_url", kwargs={"pk": self.id})
-
-    @property
     def average_rating(self):
         average = self.courserating_set.aggregate(avg_val=Avg("rating"))["avg_val"]
         if not average:
@@ -71,6 +68,9 @@ class Course(BaseModel):
     @property
     def checked_star(self):
         return (round(self.average_rating * 2) / 2) * 2
+
+    def __str__(self):
+        return self.title
 
 
 class CourseRequirement(BaseModel):
@@ -98,22 +98,26 @@ class CourseSection(BaseModel):
     title = models.CharField(max_length=255)
     order = models.IntegerField(default=0)
 
+    def __str__(self) -> str:
+        return f"{self.title} -> {self.course.title}"
+
 
 def get_course_lecture_file_path(instance, filename):
-    return f"courses/{instance.section.course.id}/sections/{instance.section.id}/lectures/{filename}"
+    return f"courses/{instance.section.course.id}/sections/{instance.section.id}/lectures/{instance.order}"
 
+def get_order():
+    pass
 
 class CourseLecture(BaseModel):
     section = models.ForeignKey(CourseSection, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
-    order = models.IntegerField(default=0)
-    content = models.FileField(upload_to=get_course_lecture_file_path)
+    order = models.IntegerField(default=get_order, unique=True)
+    content = models.FileField(upload_to=get_course_lecture_file_path, max_length=500)
     previewable = models.BooleanField(default=False)
 
     @property
     def content_type(self):
         return self.content.content_type
-
 
 class CourseRating(BaseModel):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -166,6 +170,8 @@ class Transaction(BaseModel):
             tx_ref=transaction.id,
             customization={"title": "Udemy"},
             return_url="http://localhost:8000" + reverse_lazy("core:index"),
+            callback_url="http://localhost:8000"
+            + reverse_lazy("core:transaction_success"),
         )
         if response["status"] == "failed":
             transaction.status = TransactionStatus.FAILED

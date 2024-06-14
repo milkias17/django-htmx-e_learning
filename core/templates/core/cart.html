@@ -7,7 +7,9 @@
                 {% if cart|length == 0 %}
                     <div class="flex flex-col gap-2">
                         <div class="chat chat-start">
-                            <div class="chat-bubble chat-bubble-primary">You have no courses in your cart:(</div>
+                            <div class="chat-bubble chat-bubble-primary">
+                                You have no courses in your cart:(
+                            </div>
                         </div>
                         <div class="chat chat-end">
                             <div class="chat-bubble chat-bubble-secondary">
@@ -15,7 +17,9 @@
                             </div>
                         </div>
                         <div class="chat chat-start">
-                            <div class="chat-bubble chat-bubble-primary">I'll miss you when you're gone</div>
+                            <div class="chat-bubble chat-bubble-primary">
+                                I'll miss you when you're gone
+                            </div>
                         </div>
                     </div>
                 {% endif %}
@@ -24,7 +28,9 @@
                         <div class="card w-96 bg-base-100 shadow-xl"
                              id="course-{{ forloop.counter }}">
                             <figure>
-                                {% if course.thumbnail %}<img src=" {{ course.thumbnail.url }} " alt="Course Picture" />{% endif %}
+                                {% if course.thumbnail %}
+                                    <img src=" {{ course.thumbnail.url }} " alt="Course Picture" />
+                                {% endif %}
                             </figure>
                             <div class="card-body">
                                 <h2 class="card-title">{{ course.title }}</h2>
@@ -51,9 +57,11 @@
                     <button hx-target="body"
                             hx-post="{% url 'core:cart' %}"
                             hx-vals='{"operation": "checkout"}'
+                            hx-indicator="#spinner"
                             class="btn btn-primary mt-8">
-                        Checkout
                         <i data-feather="shopping-cart"></i>
+                        Checkout
+                        <span id="spinner" class="loading loading-spinner app-indicator"></span>
                     </button>
                 {% endif %}
             {% endblock courses %}

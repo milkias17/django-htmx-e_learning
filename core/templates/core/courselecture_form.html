@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <form action="{% url 'core:lecture_edit' pk=lecture.id %}"
+          method="post"
+          enctype="multipart/form-data"
+          class="flex items-center justify-center flex-col">
+        <div>{{ form|crispy }}</div>
+        <button class="btn btn-primary">Submit</button>
+    </form>
+{% endblock content %}

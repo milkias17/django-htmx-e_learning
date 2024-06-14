@@ -2,7 +2,7 @@ from django import forms
 from django.forms.widgets import Select, TextInput
 from django.utils.safestring import mark_safe
 
-from core.models import Course, CourseAudience, CourseRequirement
+from core.models import Course, CourseAudience, CourseLecture, CourseRequirement
 
 
 class DatalistTextInput(TextInput):
@@ -89,3 +89,9 @@ class CourseAudienceForm(forms.ModelForm):
     class Meta:
         model = CourseAudience
         fields = ["description"]
+
+
+class CourseLectureForm(forms.ModelForm):
+    class Meta:
+        model = CourseLecture
+        exclude = ["id", "created_at", "updated_at", "order"]

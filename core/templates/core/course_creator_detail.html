@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="p-8 mt-4"
+         x-data="{'showModal': false}"
+         @keydown.escape="showModal = false">
+        <div class="fixed inset-0 z-30 flex items-center justify-center overflow-auto bg-black bg-opacity-50"
+             x-show="showModal"
+             x-cloak>
+            <!-- Modal inner -->
+            <div class="max-w-3xl px-6 py-4 mx-auto text-left bg-white rounded shadow-lg"
+                 @click.away="showModal = false"
+                 x-transition:enter="motion-safe:ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-90"
+                 x-transition:enter-end="opacity-100 scale-100">
+                <!-- Title / Close-->
+                <div class="flex items-center justify-between">
+                    <h5 class="mr-3 text-black max-w-none">Course Lecture</h5>
+
+                    <button type="button" class="z-50 cursor-pointer" @click="showModal = false">
+                        <i data-feather="x"></i>
+                    </button>
+                </div>
+
+                <!-- content -->
+                <form method="post"
+                      enctype="multipart/form-data"
+                      hx-post="{% url 'core:lecture_create' %}">
+                    <div id="modal-content"></div>
+                    <button class="btn btn-primary" @click="showModal = false">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <h1 class="text-center font-bold text-3xl">{{ course.title }}</h1>
+
+        <div class="border border-primary p-8">
+            <h1 class="text-center font-bold text-3xl">Course Sections</h1>
+            <ul id="sections" class="flex flex-col gap-4 mt-4">
+                {% for section in course.coursesection_set.all %}
+                    <li class="flex gap-2">
+                        <div class="collapse collapse-plus bg-base-200">
+                            <input type="checkbox" />
+                            <div class="collapse-title text-xl font-medium">{{ section.title }}</div>
+                            <div class="collapse-content">
+                                {% for lecture in section.courselecture_set.all %}
+                                <div class="flex justify-between items-center">
+                                  {{ lecture.title }}
+                                  <a class="btn btn-link btn-accent" href="{% url 'core:lecture_edit' pk=lecture.id %}">Edit</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="flex items-center justify-center gap-2 mt-10">
+                <form hx-post="{% url 'core:creator_course_detail' pk=course.id %}"
+                      hx-swap="beforeend"
+                      hx-target="#sections"
+                      hx-indicator="#section-spinner"
+                      class="flex gap-2 items-center">
+                    <input type="hidden" name="op-type" value="section">
+                    <input class="input input-bordered input-sm"
+                           type="text"
+                           name="title"
+                           placeholder="Section Title"
+                           required>
+                    <button class="btn btn-secondary btn-sm" type="submit">
+                        <i data-feather="plus"></i>
+                        Add
+                        <span id="section-spinner" class="loading loading-spinner app-indicator"></span>
+                    </button>
+                </form>
+
+                <button hx-get="{% url 'core:lecture_create' %}"
+                        class="btn btn-accent btn-sm"
+                        @click="showModal = true"
+                        hx-target="#modal-content">
+                    <i data-feather="plus"></i>
+                    Add Lecture
+                </button>
+            </div>
+
+        </div>
+        <div class="grid grid-cols-2 mt-8 gap-4">
+
+            <div class="border border-primary p-8">
+                <h1 class="text-center font-bold text-3xl">Course Requirements</h1>
+                <ul id="requirements"
+                    class="flex flex-col items-center justify-center list-disc mt-4">
+                    {% for requirement in course.requirements.all %}
+                        <li>{{ requirement.description }}</li>
+                    {% endfor %}
+                </ul>
+                <form hx-post="{% url 'core:creator_course_detail' pk=course.id %}"
+                      hx-swap="beforeend"
+                      hx-target="#requirements"
+                      hx-indicator="#spinner"
+                      class="flex items-center justify-center gap-2 mt-10">
+                    <input type="hidden" name="op-type" value="requirement">
+                    <textarea name="description"
+                              type="text"
+                              class="textarea textarea-primary textarea-md"
+                              required
+                              placeholder="Description"></textarea>
+                    <button class="btn btn-secondary btn-md" type="submit">
+                        <i data-feather="plus"></i>
+                        Add
+                        <span id="spinner" class="loading loading-spinner app-indicator"></span>
+                    </button>
+                </form>
+            </div>
+            <div class="border border-primary p-8">
+                <h1 class="text-center font-bold text-3xl">Course Audience</h1>
+                <ul id="audiences"
+                    class="flex flex-col items-center justify-center list-disc mt-4">
+                    {% for audience in course.audience.all %}
+                        <li>{{ audience.description }}</li>
+                    {% endfor %}
+                </ul>
+                <form hx-post="{% url 'core:creator_course_detail' pk=course.id %}"
+                      hx-swap="beforeend"
+                      hx-target="#audiences"
+                      hx-indicator="#audience-spinner"
+                      hx-on::after-request="this.reset()"
+                      class="flex items-center justify-center gap-2 mt-10">
+                    <input type="hidden" name="op-type" value="audience">
+                    <textarea name="description"
+                              type="text"
+                              class="textarea textarea-primary textarea-md"
+                              required
+                              placeholder="Description"></textarea>
+                    <button class="btn btn-secondary btn-md" type="submit">
+                        <i data-feather="plus"></i>
+                        Add
+                        <span id="audience-spinner" class="loading loading-spinner app-indicator"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

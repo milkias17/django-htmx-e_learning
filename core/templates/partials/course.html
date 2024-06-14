@@ -1,7 +1,7 @@
 {% load core_filters %}
 <div class="card w-96 bg-base-100 shadow-xl py-4 course-card"
      {% if page_obj.has_next and last %}
-         hx-get="{% url 'core:index' %}?page={{ page_obj.next_page_number }}&{% query_string request.GET %}" hx-trigger="revealed" hx-swap="afterend transition:true" hx-indicator=".course-skeleton"
+         hx-get="{% url 'core:index' %}?page={{ page_obj.next_page_number }}&{% query_string request.GET %}" hx-trigger="revealed" hx-target="#main-course-list" hx-swap="beforeend settle:1s" hx-indicator=".course-skeleton"
      {% endif %}>
     <figure>
         {% if course.thumbnail %}
@@ -24,7 +24,7 @@
         </div>
         <div class="card-actions justify-end">
             <a class="btn btn-primary"
-               href=" {% if is_creator %} {{ course.creator_detail_url }} {% else %} {% url 'core:course_detail' pk=course.id %} {% endif %} ">View Details</a>
+               href=" {% if is_creator %} {% url 'core:creator_course_detail' pk=course.id %} {% else %} {% url 'core:course_detail' pk=course.id %} {% endif %} ">View Details</a>
         </div>
     </div>
 </div>
