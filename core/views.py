@@ -9,7 +9,14 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+    View,
+)
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django_htmx.http import (
@@ -181,15 +188,38 @@ class CreatorCourseDetailView(LoginRequiredMixin, DetailView):
                     title=title,
                     order=CourseSection.objects.count(),
                 )
-                return HttpResponse(
-                    f"<li>{section.title}</li>", content_type="text/html"
+                return render_html_block(
+                    "core/course_creator_detail.html",
+                    "section",
+                    {"section": section},
+                    self.request,
                 )
+
+
+@method_decorator(inject_messages, name="post")
+class CourseSectionDeleteView(LoginRequiredMixin, DeleteView):
+    model = CourseSection
+
+    def form_valid(self, form):
+        messages.success(self.request, "Section deleted successfully")
+        self.object.delete()
+        return HttpResponse(status=200)
 
 
 class CourseLectureCreateView(LoginRequiredMixin, CreateView):
     model = CourseLecture
     form_class = CourseLectureForm
     template_name = "partials/base-form.html"
+
+    def form_valid(self, form) -> HttpResponse:
+        self.object = form.save()
+        response = render_html_block(
+            "core/course_creator_detail.html",
+            "lecture",
+            {"lecture": self.object},
+            self.request,
+        )
+        return retarget(response, f"#lecture-list-{self.object.section.id}")
 
     def get_success_url(self) -> str:
         return self.request.META.get("HTTP_REFERER")
@@ -212,6 +242,20 @@ class CourseLectureEditView(LoginRequiredMixin, UpdateView):
                 kwargs={"pk": self.get_object().section.course.id},
             ),
         )
+
+
+@method_decorator(inject_messages, name="post")
+class CourseLectureDeleteView(LoginRequiredMixin, DeleteView):
+    model = CourseLecture
+
+    def form_valid(self, form):
+        messages.success(self.request, "Lecture Removed Successfully!")
+        self.object.delete()
+        return HttpResponse(status=200)
+
+    def get_success_url(self) -> str:
+        messages.success(self.request, "Lecture Removed Successfully!")
+        return self.request.META.get("HTTP_REFERER")
 
 
 @method_decorator(inject_messages, name="post")

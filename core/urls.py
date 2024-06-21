@@ -15,6 +15,11 @@ urlpatterns = [
         name="lecture_create",
     ),
     path(
+        "lectures/delete/<slug:pk>/",
+        views.CourseLectureDeleteView.as_view(),
+        name="lecture_delete",
+    ),
+    path(
         "lecture/<slug:pk>/edit/",
         views.CourseLectureEditView.as_view(),
         name="lecture_edit",
@@ -23,6 +28,11 @@ urlpatterns = [
         "creator_coures/<slug:pk>/",
         views.CreatorCourseDetailView.as_view(),
         name="creator_course_detail",
+    ),
+    path(
+        "section/<slug:pk>/delete",
+        views.CourseSectionDeleteView.as_view(),
+        name="section_delete",
     ),
     path("cart/", views.CartOperations.as_view(), name="cart"),
     path("user_courses/", views.UserCourseListView.as_view(), name="user_courses"),

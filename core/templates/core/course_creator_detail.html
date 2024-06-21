@@ -25,33 +25,86 @@
                 <!-- content -->
                 <form method="post"
                       enctype="multipart/form-data"
-                      hx-post="{% url 'core:lecture_create' %}">
+                      hx-post="{% url 'core:lecture_create' %}"
+                      hx-swap="beforeend">
                     <div id="modal-content"></div>
                     <button class="btn btn-primary" @click="showModal = false">Submit</button>
                 </form>
             </div>
         </div>
 
-        <h1 class="text-center font-bold text-3xl">{{ course.title }}</h1>
+        <h1 class="text-center font-bold text-5xl">{{ course.title }}</h1>
 
-        <div class="border border-primary p-8">
+        <div class="p-8 mt-5">
             <h1 class="text-center font-bold text-3xl">Course Sections</h1>
-            <ul id="sections" class="flex flex-col gap-4 mt-4">
+            <ul id="sections" class="grid md:lg-cols-2 lg:grid-cols-4 gap-4 mt-4">
                 {% for section in course.coursesection_set.all %}
-                    <li class="flex gap-2">
-                        <div class="collapse collapse-plus bg-base-200">
-                            <input type="checkbox" />
-                            <div class="collapse-title text-xl font-medium">{{ section.title }}</div>
-                            <div class="collapse-content">
-                                {% for lecture in section.courselecture_set.all %}
-                                <div class="flex justify-between items-center">
-                                  {{ lecture.title }}
-                                  <a class="btn btn-link btn-accent" href="{% url 'core:lecture_edit' pk=lecture.id %}">Edit</a>
-                                </div>
-                                {% endfor %}
+                    {% block section %}
+                    <li id="section-{{ section.id }}" class="flex flex-col gap-2">
+                            <div class="flex justify-around">
+                                <p class="text-3xl text-center">{{ section.title }}</p>
+                                <button hx-post="{% url 'core:section_delete' pk=section.id %}"
+                                        hx-target="#section-{{ section.id }}"
+                                        hx-swap="delete"
+                                        hx-confirm="Are you sure you wish to delete this section?">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="24"
+                                         height="24"
+                                         viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         stroke-width="2"
+                                         stroke-linecap="round"
+                                         stroke-linejoin="round"
+                                         class="feather feather-trash-2 w-8 stroke-warning">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                        </path>
+                                        <line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
+                                    </svg>
+                                </button>
                             </div>
-                        </div>
-                    </li>
+                            <ul id="lecture-list-{{ section.id }}" class="flex flex-col gap-4 ml-4">
+                                {% for lecture in section.courselecture_set.all %}
+                                    {% block lecture %}
+                                        <li id="lecture-{{ lecture.id }}" class="card w-96 bg-base-100 shadow-xl">
+                                            <figure>
+                                                <video controls>
+                                                    <source src="{{ lecture.content.url }}">
+                                                    Your browser doesn't support videos
+                                                </video>
+                                            </figure>
+                                            <div class="card-body">
+                                                <h2 class="card-title">{{ lecture.title }}</h2>
+                                                <div class="card-actions justify-end">
+                                                    <button hx-post="{% url 'core:lecture_delete' pk=lecture.id %}"
+                                                            hx-target="#lecture-{{ lecture.id }}"
+                                                            hx-swap="delete"
+                                                            hx-confirm="Are you sure you wish to delete this lecture?">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                             width="24"
+                                                             height="24"
+                                                             viewBox="0 0 24 24"
+                                                             fill="none"
+                                                             stroke="currentColor"
+                                                             stroke-width="2"
+                                                             stroke-linecap="round"
+                                                             stroke-linejoin="round"
+                                                             class="feather feather-trash-2 w-8 stroke-warning">
+                                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                            </path>
+                                                            <line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    {% endblock lecture %}
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endblock section %}
                 {% endfor %}
             </ul>
             <div class="flex items-center justify-center gap-2 mt-10">
@@ -59,13 +112,15 @@
                       hx-swap="beforeend"
                       hx-target="#sections"
                       hx-indicator="#section-spinner"
+                      hx-on::after-request="this.reset()"
                       class="flex gap-2 items-center">
                     <input type="hidden" name="op-type" value="section">
                     <input class="input input-bordered input-sm"
                            type="text"
                            name="title"
                            placeholder="Section Title"
-                           required>
+                           required
+                           >
                     <button class="btn btn-secondary btn-sm" type="submit">
                         <i data-feather="plus"></i>
                         Add
@@ -97,6 +152,7 @@
                       hx-swap="beforeend"
                       hx-target="#requirements"
                       hx-indicator="#spinner"
+                      hx-on::after-request="this.reset()"
                       class="flex items-center justify-center gap-2 mt-10">
                     <input type="hidden" name="op-type" value="requirement">
                     <textarea name="description"

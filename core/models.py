@@ -8,7 +8,7 @@ import logging
 from django.db import models
 import uuid
 from django.contrib.auth.models import User
-from django.db.models import Avg
+from django.db.models import Avg, Max
 from django.urls import reverse_lazy
 from core.transactions import chapa
 
@@ -108,19 +108,28 @@ class CourseSection(BaseModel):
 def get_course_lecture_file_path(instance, filename):
     return f"courses/{instance.section.course.id}/sections/{instance.section.id}/lectures/{instance.order}"
 
-def get_order():
-    pass
 
 class CourseLecture(BaseModel):
     section = models.ForeignKey(CourseSection, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
-    order = models.IntegerField(default=get_order, unique=True)
+    order = models.IntegerField()
     content = models.FileField(upload_to=get_course_lecture_file_path, max_length=500)
     previewable = models.BooleanField(default=False)
 
     @property
     def content_type(self):
         return self.content.content_type
+
+    def save(self, *args, **kwargs) -> None:
+        if self.order is None:
+            last_order = CourseLecture.objects.filter(section=self.section).aggregate(
+                order=Max("order")
+            )["order"]
+            if not last_order:
+                last_order = 0
+            self.order = last_order + 1
+        return super().save(*args, **kwargs)
+
 
 class CourseRating(BaseModel):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
