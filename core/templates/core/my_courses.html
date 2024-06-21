@@ -15,7 +15,12 @@
         </a>
     </div>
     <main id="main-course-list"
-          class="m-4 md:m-8 flex flex-wrap lg:grid lg:grid-cols-4 gap-4">
+          class="m-4 md:m-8 flex flex-wrap lg:grid lg:grid-cols-4 gap-4"
+          hx-get="{% url 'core:my_courses' %}"
+          hx-swap="innerHTML"
+          hx-trigger="load"
+          hx-indicator=".course-skeleton"
+          >
         {% block course_list %}
             {% for i in 8|times %}
                 <div id="#course-skeleton-{{ i }}"

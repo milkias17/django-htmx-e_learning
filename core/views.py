@@ -1,4 +1,5 @@
 import json
+from typing import Any
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import os
@@ -115,6 +116,11 @@ class CreatedCoursesListView(LoginRequiredMixin, ListView):
     context_object_name = "courses"
     queryset = Course.objects.order_by("-updated_at")
 
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if not request.htmx or request.htmx.boosted:
+            return render(request, self.template_name)
+        return super().get(request, *args, **kwargs)
+
     def get_queryset(self):
         courses = super().get_queryset()
         return courses.filter(user=self.request.user)
@@ -123,6 +129,15 @@ class CreatedCoursesListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(*args, **kwargs)
         context["is_creator"] = True
         return context
+
+    def render_to_response(
+        self, context: dict[str, Any], **response_kwargs: Any
+    ) -> HttpResponse:
+        if self.request.htmx and not self.request.htmx.boosted:
+            return render_html_block(
+                self.template_name, "course_list", context, self.request
+            )
+        return super().render_to_response(context, **response_kwargs)
 
 
 class CreatorCourseDetailView(LoginRequiredMixin, DetailView):
