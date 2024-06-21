@@ -47,7 +47,6 @@ from core.models import (
     TransactionStatus,
 )
 from core.utils import htmx_redirect, inject_messages, render_html_block
-from udemy.auth_utils import GroupRequiredMixin
 
 
 def home(request):
@@ -55,9 +54,11 @@ def home(request):
 
 
 class CourseFilter(django_filters.FilterSet):
+    title = django_filters.CharFilter(lookup_expr="icontains")
+
     class Meta:
         model = Course
-        fields = ["title", "category"]
+        fields = ["category"]
 
 
 class CoursesListView(FilterView):
