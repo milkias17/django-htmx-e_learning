@@ -23,6 +23,7 @@ chapa = "^0.1.2"
 django-stubs = "^5.0.2"
 factory-boy = "^3.3.0"
 python-dotenv = "^1.0.1"
+ipython = "^8.25.0"
 
 [tool.djlint]
 profile = "django"

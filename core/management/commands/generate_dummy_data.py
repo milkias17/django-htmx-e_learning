@@ -16,7 +16,9 @@ class Command(BaseCommand):
     help = "Generates test data"
 
     def add_arguments(self, parser: CommandParser) -> None:
-        parser.add_argument("num_courses", type=int)
+        parser.add_argument("--num_courses", type=int)
+        parser.add_argument("--num_users", type=int)
+        parser.add_argument("-users", action="store_true")
 
     @transaction.atomic
     def handle(self, *args, **kwargs):
@@ -25,7 +27,13 @@ class Command(BaseCommand):
         # for m in models:
         #     m.objects.all().delete()
 
-        num_courses = kwargs.get("num_courses") or NUM_COURSES
-        self.stdout.write("Creating " + str(num_courses) + "....")
-        # Create all the users
-        CourseFactory.create_batch(num_courses)
+        if "users" in args:
+            num_users = kwargs.get("num_users") or NUM_USERS
+            self.stdout.write("Creating " + str(num_users) + ".....")
+            UserFactory.create_batch(num_users)
+            self.stdout.write("Created" + str(num_users)  + "!!!")
+        else:
+            num_courses = kwargs.get("num_courses") or NUM_COURSES
+            self.stdout.write("Creating " + str(num_courses) + " courses ....")
+            # Create all the users
+            CourseFactory.create_batch(num_courses)

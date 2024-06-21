@@ -3,7 +3,15 @@ const projectRoot = path.resolve(__dirname);
 
 const { spawnSync } = require("child_process");
 
-const getTemplateFiles = () => {
+/**
+ * @type {string[] | null}
+ */
+let cachedTemplateFiles = null;
+
+function getTemplateFiles() {
+  if (cachedTemplateFiles) return cachedTemplateFiles;
+  console.log("Getting template files from django....")
+
   const command = "python"; // Requires virtualenv to be activated.
   const args = ["manage.py", "list_templates"]; // Requires cwd to be set.
   const options = { cwd: projectRoot };
@@ -27,6 +35,7 @@ const getTemplateFiles = () => {
     .filter(function (e) {
       return e;
     }); // Remove empty strings, including last empty line.
+  cachedTemplateFiles = templateFiles;
   return templateFiles;
 };
 
