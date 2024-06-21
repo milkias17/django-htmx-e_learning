@@ -54,18 +54,15 @@ class CourseFilter(django_filters.FilterSet):
 
 class CoursesListView(FilterView):
     model = Course
-    template_name = "home.html"
+    template_name = "partials/course-list.html"
     context_object_name = "courses"
     filterset_class = CourseFilter
-    queryset = Course.objects.order_by("-updated_at")
     paginate_by = 16
 
     def render_to_response(self, context, **response_kwargs):
-        if self.request.htmx and not self.request.htmx.boosted:
-            time.sleep(1)
-            return render_html_block(
-                self.template_name, "course_list", context, self.request
-            )
+        if not self.request.htmx:
+            return render(self.request, "home.html")
+        time.sleep(1)
         return super().render_to_response(context, **response_kwargs)
 
 

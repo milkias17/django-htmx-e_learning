@@ -14,7 +14,7 @@
             <ul tabIndex="0"
                 class="dropdown-content menu p-2 shadow bg-base-100 w-52 text-black z-50">
                 <li>
-                    <button hx-get="{% url 'core:index' %}"
+                    <button hx-get="{% url 'core:course_list' %}"
                             hx-target="#main-course-list"
                             hx-push-url="true"
                             hx-indicator="#main-course-list">All</button>
@@ -22,7 +22,7 @@
                 {% for category in course_categories %}
                     <li>
                         {% if request.path == "/" %}
-                            <button hx-get="{% url 'core:index' %}?category={{ category.id }}"
+                            <button hx-get="{% url 'core:course_list' %}?category={{ category.id }}"
                                     hx-target="#main-course-list"
                                     hx-indicator="#main-course-list"
                                     hx-push-url="true">

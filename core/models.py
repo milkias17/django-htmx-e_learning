@@ -57,6 +57,9 @@ class Course(BaseModel):
     category = models.ForeignKey(CourseCategory, on_delete=models.CASCADE)
     enrolled_users = models.ManyToManyField(to=User, related_name="enrolled_courses")
 
+    class Meta:
+        ordering = ["-updated_at"]
+
     @property
     def average_rating(self):
         average = self.courserating_set.aggregate(avg_val=Avg("rating"))["avg_val"]

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% load static %}
 {% load core_filters %}
+{% load static %}
 {% block statics %}
     <link href="{% static "core/home.css" %}" rel="stylesheet">
 {% endblock statics %}
@@ -9,40 +9,13 @@
         Here are some of our course offerings
     </h1>
     <main id="main-course-list"
-          class="m-4 md:m-8 flex flex-wrap lg:grid lg:grid-cols-4 gap-4">
+          class="m-4 md:m-8 flex flex-wrap lg:grid lg:grid-cols-4 gap-4"
+          hx-get="{% url 'core:course_list' %}?{% query_string request.GET %}"
+          hx-swap="innerHTML"
+          hx-trigger="load"
+          hx-indicator=".course-skeleton">
         {% block course_list %}
-            {% for course in courses %}
-                {% if forloop.last %}
-                    {% include "partials/course.html" with last=True %}
-                {% else %}
-                    {% include "partials/course.html" %}
-                {% endif %}
-            {% endfor %}
-            {% for i in 8|times %}
-                <div id="#course-skeleton-{{ i }}"
-                     hx-preserve
-                     class="card w-96 bg-base-100 shadow-xl py-4 app-indicator course-skeleton">
-                    <figure>
-                        <div class="skeleton h-32 w-28"></div>
-                    </figure>
-                    <div class="card-body">
-                        <div class="skeleton h-4 w-36"></div>
-                        <div class="skeleton h-4 w-20 mt-2"></div>
-                        <div class="skeleton h-4 w-full mt-10"></div>
-                        <div class="skeleton h-4 w-full "></div>
-                        <div class="skeleton h-4 w-full "></div>
-                        <div class="skeleton h-4 w-full "></div>
-                        <div class="flex justify-between mt-10">
-                            <div class="skeleton h-2 w-28"></div>
-                            <div class="skeleton h-2 w-28"></div>
-                        </div>
-                        <div class="skeleton h-2 w-28 mt-2"></div>
-                        <div class="card-actions justify-end">
-                            <div class="skeleton h-8 w-28"></div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
+            {% include "partials/course-list.html" with courses=courses %}
         {% endblock course_list %}
     </main>
 {% endblock content %}

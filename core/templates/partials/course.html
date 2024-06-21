@@ -1,7 +1,7 @@
 {% load core_filters %}
 <div class="card w-96 bg-base-100 shadow-xl py-4 course-card"
      {% if page_obj.has_next and last %}
-         hx-get="{% url 'core:index' %}?page={{ page_obj.next_page_number }}&{% query_string request.GET %}" hx-trigger="revealed" hx-target="#main-course-list" hx-swap="beforeend settle:1s" hx-indicator=".course-skeleton"
+         hx-get="{% url 'core:course_list' %}?page={{ page_obj.next_page_number }}&{% query_string request.GET %}" hx-trigger="revealed" hx-target="#main-course-list" hx-swap="beforeend settle:1s" hx-indicator=".course-skeleton"
      {% endif %}>
     <figure>
         {% if course.thumbnail %}
