@@ -8,7 +8,11 @@
                  height="24">
         </a>
         <div class="dropdown dropdown-hover z-[9999]">
-            <div tabIndex="0" role="button" class="mx-7 text-primary-content">
+            <div x-data="{open: false}"
+                 @click="if (open) { $el.blur(); } open = !open"
+                 tabIndex="0"
+                 role="button"
+                 class="mx-7 text-primary-content">
                 <span>Categories</span>
             </div>
             <ul tabIndex="0"
@@ -40,7 +44,7 @@
         {% include "partials/nav-cart-dropdown.html" with cart=cart %}
         <div class="dropdown dropdown-end">
             <div x-data="{open: false}"
-                 @click=" if (open) { $el.blur(); } open = !open "
+                 @click="if (open) { $el.blur(); } open = !open"
                  tabindex="0"
                  role="button"
                  class="btn btn-ghost btn-circle avatar">

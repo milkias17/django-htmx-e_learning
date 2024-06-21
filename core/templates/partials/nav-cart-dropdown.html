@@ -2,7 +2,11 @@
      class="dropdown dropdown-end"
      hx-trigger="refresh_nav_cart from:body"
      hx-get="{% url 'core:cart' %}">
-    <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+    <div x-data="{open: false}"
+         @click="if (open) { $el.blur(); } open = !open"
+         tabindex="0"
+         role="button"
+         class="btn btn-ghost btn-circle">
         <div class="indicator">
             <svg xmlns="http://www.w3.org/2000/svg"
                  class="h-5 w-5"
