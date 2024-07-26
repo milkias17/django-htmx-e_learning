@@ -26,7 +26,11 @@
             <div id="course-actions" class="mt-8 flex gap-4 items-center">
                 {% block course_actions %}
                     {% if user in course.enrolled_users.all %}
-                        <div class="badge badge-lg badge-primary">Course Bought!</div>
+                        <a href="{% url 'core:course_content' pk=course.id %}"
+                           class="btn btn-neutral">
+                            View Course Content
+                            <i data-feather="arrow-right" class="w-4"></i>
+                        </a>
                     {% else %}
                         {% if not in_cart %}
                             <button hx-swap="delete"
@@ -62,7 +66,9 @@
         <div class="basis-1/2 prose">
             <h2>Requirements</h2>
             <ul>
-                {% for requirement in course.requirements.all %}<li>{{ requirement }}</li>{% endfor %}
+                {% for requirement in course.requirements.all %}
+                    <li>{{ requirement }}</li>
+                {% endfor %}
             </ul>
         </div>
         <div class="prose">

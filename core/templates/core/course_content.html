@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="mx-8 mt-10">
+        <ul class="space-y-8">
+            {% for section in course.coursesection_set.all %}
+                <li class="space-y-4">
+                    <p class="text-center text-4xl">{{ section.title }}</p>
+                    <ul class="ml-8 space-y-4">
+                        {% for lecture in section.courselecture_set.all %}
+                            <a href="{% url 'core:lecture_video' lecture_id=lecture.id %}"
+                               class="bg-primary p-6 text-2xl flex justify-between hover:cursor-pointer transition-transform ease-in-out delay-75 hover:scale-x-105">
+                                <p>{{ lecture.title }}</p>
+                                <i data-feather="arrow-right" class="w-8"></i>
+                            </a>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock content %}

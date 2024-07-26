@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block statics %}
+    <script src="{% static 'js/videoControls.js' %}" defer></script>
+{% endblock statics %}
+
+{% block content %}
+    <video controls class="w-full h-full">
+        <source src="{{ lecture.content.url }}">
+        Your browser doesn't support videos
+    </video>
+{% endblock content %}

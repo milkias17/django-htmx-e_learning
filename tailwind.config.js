@@ -47,7 +47,7 @@ module.exports = {
   },
   plugins: [require("@tailwindcss/typography"), require("daisyui")],
   daisyui: {
-    themes: ["emerald", "corporate", "light", "dark", "cupcake", "halloween"],
+    themes: ["emerald", "corporate", "light", "dark", "cupcake", "halloween", "aqua"],
   },
   safelist: [
     "mask-half-1",

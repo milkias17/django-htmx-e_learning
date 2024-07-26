@@ -295,6 +295,16 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
         )
 
 
+class CourseContentView(LoginRequiredMixin, DetailView):
+    model = Course
+    template_name_suffix = "_content"
+
+
+def lecture_video_view(request: HttpRequest, lecture_id: int):
+    lecture = get_object_or_404(CourseLecture, pk=lecture_id)
+    return render(request, "core/course_video_page.html", context={"lecture": lecture})
+
+
 @method_decorator(inject_messages, name="post")
 @method_decorator(inject_messages, name="delete")
 class CartOperations(View):

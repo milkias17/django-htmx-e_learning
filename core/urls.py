@@ -10,6 +10,16 @@ urlpatterns = [
     path("courses/create/", views.CourseCreateView.as_view(), name="course_create"),
     path("courses/<slug:pk>/", views.CourseDetailView.as_view(), name="course_detail"),
     path(
+        "course_content/video/<slug:lecture_id>/",
+        views.lecture_video_view,
+        name="lecture_video",
+    ),
+    path(
+        "course_content/<slug:pk>/",
+        views.CourseContentView.as_view(),
+        name="course_content",
+    ),
+    path(
         "lectures/create/",
         views.CourseLectureCreateView.as_view(),
         name="lecture_create",
