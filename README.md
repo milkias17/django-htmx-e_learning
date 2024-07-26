@@ -1,17 +1,39 @@
-# Udemy-Clone Project Description
+# Django + HTMX
 
-Udemy-Clone is a web application developed as part of the Internet Programming 2 course assignment. This project aims to replicate the core functionalities of Udemy, a popular online learning platform. The application allows users to browse, enroll in courses, and access course content, while instructors can create and manage courses. The primary technologies used in this project include Django for the backend, and HTML, CSS, and JavaScript for the frontend.
+A very basic e-learning platform built with Django and HTMX.
 
-## Key Features
+## Features
 
-- **User Authentication:** Users can register, log in, and manage their profiles.
-- **Course Browsing and Search:** Users can browse and search for courses based on categories and keywords.
-- **Responsive Design:** The application is designed to be responsive and user-friendly across various devices.
+- Login/Signup
+- Courses
+- SPA like navigation
+- Lazy-loading
+- Dynamic state transformations
 
-## Technologies Used
+# Tech Stack
 
-- **Backend:** Django
-- **Frontend:** HTML, CSS, JavaScript
-- **Database:** SQLite (or other Django-supported databases)
+- Django
+- HTMX
+- Tailwind CSS
+- DaisyUI
 
-This project demonstrates the integration of a powerful backend framework (Django) with essential web technologies to create a functional and interactive learning platform.
+# Installation
+
+1. Clone the repository
+1. Create a virtual environment
+1. Install dependencies
+1. Run the tailwindcss compiler
+1. Run the server
+
+```bash
+git clone https://github.com/milkias17/django-htmx-e_learning.git
+cd django-htmx-e_learning
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+npm run dev
+python manage.py runserver
+```
+
+Tip: Use `python manage.py generate_dummy_data --num_courses=<number of courses>` to generate dummy data.
